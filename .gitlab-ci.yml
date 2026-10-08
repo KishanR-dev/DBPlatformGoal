@@ -24,6 +24,13 @@ default:
 # -----------------------------------------------------------------------------
 # 1. VALIDATE STAGE
 # -----------------------------------------------------------------------------
+lint:bash:
+  stage: validate
+  image: koalaman/shellcheck:stable
+  script:
+    - echo "Validating Bash scripts with ShellCheck and syntax analysis..."
+    - shellcheck scripts/ci/*.sh scripts/ops/*.sh
+
 lint:python:
   stage: validate
   image: python:${PYTHON_VERSION}-slim

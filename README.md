@@ -64,7 +64,7 @@ No professional experience, production uptime, enterprise scale, or cloud certif
 
 ## 4. Current State
 
-> **Phase Status: Terraform Infrastructure-as-Code natively managing the DBPlatformGoal cluster environment**
+> **Phase Status: Linux Platform Operations, Bash Automation, Networking Diagnostics, and Firewall Troubleshooting Lab Locally Validated**
 
 At this current stage:
 - The local host environment and toolchain have been audited and verified (`docs/environment/toolchain.md`).
@@ -73,9 +73,10 @@ At this current stage:
 - The hardened multi-stage container image is built and validated (`docs/container/`).
 - A 3-node `kind` cluster acts as our local development target Kubernetes platform (`docs/kubernetes/`).
 - The raw Kustomize Kubernetes manifests have been logically migrated to a parameterized Helm chart (`charts/servicepulse/`), rendering templates contextually via `values-dev.yaml`. Environment interpolation, syntax linting (`helm lint`), atomic releases (`helm upgrade`), and reversion mechanics (`helm rollback`) are active and validated natively on the cluster (`docs/helm/`).
-- **Newly completed:** A 7-stage GitLab CI/CD Pipeline (`.gitlab-ci.yml`) is implemented spanning linting, pytest coverage testing, AST security scanning (Bandit), immutable Docker building, Helm packaging, and declarative `kind` deployment followed by live smoke testing. It is wrapped in a local executor shim (`scripts/ci/local-ci-exec.sh`) to evaluate offline against the host context gracefully (`docs/gitlab/`).
-- **Newly completed:** A Terraform local provisioning framework is implemented mapping the IaC paradigm to the local runtime. A `.tf` structure initializes the `tehcyx/kind` provider, applying stateful changes to the cluster topology iteratively (proven via successful up-scaling and down-scaling of worker nodes) (`docs/terraform/`).
-- **Prometheus/Grafana observability have NOT yet been implemented.** They will be constructed incrementally in subsequent phases.
+- A 7-stage GitLab CI/CD Pipeline (`.gitlab-ci.yml`) is implemented spanning ShellCheck/bash linting, python syntax/style, pytest coverage testing, AST security scanning (Bandit), immutable Docker building, Helm packaging, and declarative `kind` deployment followed by live smoke testing. It is wrapped in a local executor shim (`scripts/ci/local-ci-exec.sh`) to evaluate offline against the host context gracefully (`docs/gitlab/`).
+- A Terraform local provisioning framework is implemented mapping the IaC paradigm to the local runtime. A `.tf` structure initializes the `tehcyx/kind` provider, applying stateful changes to the cluster topology iteratively (proven via successful up-scaling and down-scaling of worker nodes) (`docs/terraform/`).
+- **Newly completed:** A full-featured **Platform Operations & Troubleshooting Lab** has been engineered and validated (`scripts/ops/`, `docs/operations/`). Linux administration, process inspection, routing/DNS diagnostics, Netfilter/iptables packet filtering, controlled failure injection, automated Root Cause Analysis (RCA), and operational runbooks are locally validated.
+- **Prometheus/Grafana observability dashboards have NOT yet been implemented.** They will be constructed incrementally in subsequent phases.
 
 ---
 
@@ -124,10 +125,19 @@ DBPlatformGoal/
 ├── .gitignore                      # Conservative source-control exclusions
 ├── README.md                       # Portfolio overview and engineering journey
 ├── DISCOVERY_REPORT.md             # Initial capability gap & discovery analysis
-├── .gitlab-ci.yml                  # 7-stage GitLab delivery pipeline definition
+├── .gitlab-ci.yml                  # 7-stage GitLab delivery pipeline definition (with ShellCheck)
 ├── scripts/
-│   └── ci/
-│       └── local-ci-exec.sh        # Bash shim for local pipeline orchestration
+│   ├── ci/
+│   │   └── local-ci-exec.sh        # Bash shim for local pipeline orchestration
+│   └── ops/                        # Platform Operations & Diagnostic Automation Suite
+│       ├── system-health.sh        # System health & metrics reporter (Human / JSON)
+│       ├── process-diagnostics.sh  # Deep process, thread, and file descriptor inspector
+│       ├── network-diagnostics.sh  # Interface, route, DNS, and TCP socket diagnostic suite
+│       ├── service-check.sh        # ServicePulse in-cluster reachability probe
+│       ├── firewall-check.sh       # Isolated Netfilter / iptables packet filtering lab
+│       ├── resource-diagnostics.sh # Controlled CPU/memory load analysis & recovery
+│       ├── incident-check.sh       # Automated incident injection, RCA & regression harness
+│       └── validate-scripts.sh     # Bash syntax (bash -n) and ShellCheck quality linter
 ├── kind/
 │   └── cluster.yaml                # 3-node local kind cluster topology (1 CP, 2 Workers)
 ├── k8s/
@@ -149,19 +159,29 @@ DBPlatformGoal/
 │       ├── app/                    # FastAPI application package
 │       ├── pyproject.toml          # Package metadata
 │       └── requirements.txt        # Frozen runtime dependencies
+├── terraform/                      # Infrastructure as Code (kind cluster lifecycle)
+│   ├── main.tf                     # Cluster topology and provider definitions
+│   ├── variables.tf                # Cluster parameter declarations
+│   ├── outputs.tf                  # Cluster endpoint & context outputs
+│   └── versions.tf                 # Provider requirements and version locks
 └── docs/
     ├── architecture/               # Workload contracts and boundary model declarations
     ├── container/                  # Container build constraints and validation reports
     ├── environment/                # Pre-requisite audits and target machine state
     ├── gitlab/                     # Continuous Integration architecture and local runner emulation boundaries
-    ├── helm/
-    │   ├── architecture.md         # Chart parameter topologies and value-isolation
-    │   ├── usage.md                # Deployment and release mechanics runbook
-    │   └── validation.md           # Deployment upgrade/rollback simulation and records
-    └── kubernetes/                 # Cluster topologies, networking, and validation baselines
+    ├── helm/                       # Helm chart architecture, runbooks, and validation records
+    ├── kubernetes/                 # Cluster topologies, networking, and validation baselines
+    ├── operations/                 # Platform Operations, Linux Admin, Bash, Firewall & Runbooks
+    │   ├── architecture.md         # Layer boundaries and operational diagnostic matrix
+    │   ├── linux.md                # Linux OS, kernel, CPU, memory, storage, and process lifecycle
+    │   ├── bash.md                 # Bash automation standards, exit codes, and ShellCheck
+    │   ├── networking.md           # Network interfaces, routing, DNS, and TCP states
+    │   ├── firewall.md             # Netfilter / iptables architecture and container lab
+    │   ├── troubleshooting.md      # 7-Step troubleshooting framework and symptom mapping
+    │   ├── runbook.md              # Production operator runbook and incident playbooks
+    │   └── validation.md           # Comprehensive operational validation evidence and RCA
+    └── terraform/                  # IaC architecture, state management, and validation records
 ```
-
-*Subsequent platform layers (`platform/terraform/`, `.gitlab-ci.yml`, `docs/incidents/`) will be introduced in their respective implementation phases.*
 
 ---
 
@@ -176,3 +196,4 @@ DBPlatformGoal/
 - **Phase 8 (Helm Release Engineering):** Packaged the K8s workload into a Helm chart (`charts/servicepulse/`), integrated `values.yaml` parameter overrides (`dev` vs. `prod`), executed atomic upgrades, tested dry-run interpolation, and successfully asserted history rollback recovery logic (`docs/helm/`).
 - **Phase 9 (GitLab CI/CD Integration):** Established `.gitlab-ci.yml` defining an end-to-end 7-stage promotion pipeline (lint, test, security, build, package, deploy, verify). Engineered a local emulator script (`scripts/ci/local-ci-exec.sh`) mirroring GitLab runner context initialization offline to achieve testable pipeline boundaries without requiring active shared SaaS runners (`docs/gitlab/`).
 - **Phase 10 (Infrastructure as Code via Terraform):** Enforced a declarative boundary where Terraform constructs and regulates the platform infrastructure (`db-platform-tf` cluster topology limits) whilst Helm governs the application payloads over it. Successfully tested drift management, immutable destroy/recreate lifecycles, and cluster resizing, tracking provider lock state securely and insulating TF state tracking via `.gitignore` (`docs/terraform/`).
+- **Phase 11 (Platform Operations & Troubleshooting Lab):** Engineered and validated a comprehensive Linux Platform Operations Lab demonstrating Linux systems administration (Ubuntu 26.04 LTS, Kernel 6.18), robust Bash automation (100% ShellCheck clean, structured JSON), networking diagnostics (interfaces, routes, DNS, socket states), Netfilter/iptables firewall packet filtering (ALLOW $\to$ DENY $\to$ RECOVER in safe container isolation), bounded resource pressure analysis, automated incident injection/detection/investigation/remediation, formal Root Cause Analysis (RCA), and operational runbooks (`scripts/ops/`, `docs/operations/`). All Linux, Bash, networking, and firewall troubleshooting capabilities locally validated through a controlled platform operations lab.

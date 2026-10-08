@@ -6,9 +6,12 @@ set -euo pipefail
 # Python jobs bypass WSL host 'Python 3.14' friction by utilizing the exact
 # 'python:3.12-slim' target defined in .gitlab-ci.yml via ephemeral docker contexts.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+cd "$REPO_ROOT"
+
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}========================================================================${NC}"
@@ -19,7 +22,8 @@ export PYTHON_VERSION="3.12"
 export IMAGE_REPOSITORY="dbplatform/servicepulse"
 export KUBE_NAMESPACE="servicepulse"
 export HELM_RELEASE="servicepulse"
-export CI_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo "local")
+CI_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo "local")
+export CI_COMMIT_SHORT_SHA
 export IMAGE_TAG="git-${CI_COMMIT_SHORT_SHA}"
 
 run_stage() {
@@ -30,6 +34,7 @@ run_job_host() {
     local job_name=$1
     shift 1
     echo -e "${GREEN}[JOB] ${job_name} (executor: host shell)${NC}"
+    # shellcheck disable=SC2294
     eval "$@"
     echo -e "${GREEN}✓ ${job_name} SUCCESS${NC}"
 }
@@ -53,6 +58,10 @@ EOF
 # 1. STAGE: VALIDATE
 # -----------------------------------------------------------------------------
 run_stage "validate"
+
+echo -e "${GREEN}[JOB] lint:bash${NC}"
+bash scripts/ops/validate-scripts.sh
+echo -e "${GREEN}✓ lint:bash SUCCESS${NC}"
 
 echo -e "${GREEN}[JOB] lint:python${NC}"
 docker run --rm dbplatformgoal-ci-emulator bash -c "

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicepulse
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/name: servicepulse
+    app.kubernetes.io/component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: servicepulse
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP

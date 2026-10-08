@@ -1,0 +1,54 @@
+# DBPlatformGoal Docker Build Ignore Rules
+# Exclude version control and metadata
+.git
+.gitignore
+.gitattributes
+
+# Python byte-code and cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing, linting, and coverage artifacts
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+tests/
+benchmarks/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Secrets, certificates, and local environment files
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+
+# Local database and data directories (clean startup creates schema)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+data/
+
+# IDE, OS, and documentation files
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+docs/
+README.md

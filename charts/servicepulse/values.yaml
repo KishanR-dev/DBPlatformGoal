@@ -1,0 +1,114 @@
+# Default values for servicepulse Helm chart.
+# This represents the secure, validated default baseline.
+
+# Number of replicas.
+# NOTE: Must remain 1 in SQLite mode due to SQLite WAL single-writer constraint.
+replicaCount: 1
+
+image:
+  repository: dbplatform/servicepulse
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "git-f549433"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "servicepulse"
+
+# Non-secret application runtime configuration
+config:
+  appEnv: "production"
+  appPort: "8000"
+  appHost: "0.0.0.0"
+  logLevel: "INFO"
+  databaseUrl: "sqlite:////app/data/servicepulse.db"
+  failureSimulationEnabled: "false"
+
+# External database secret configuration (disabled by default in SQLite mode)
+secret:
+  enabled: false
+  # databaseUrl: "postgresql://appuser:password@postgres:5432/servicepulse"
+
+# Pod-level security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level security context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Kubernetes Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+  name: http
+
+# Container resource sizing (initial development / testing values)
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# Three-tier health probe configuration
+probes:
+  startup:
+    enabled: true
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 2
+    periodSeconds: 3
+    timeoutSeconds: 2
+    failureThreshold: 10
+  readiness:
+    enabled: true
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 2
+  liveness:
+    enabled: true
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Storage mounts (SQLite data volume and memory tmpfs)
+storage:
+  data:
+    mountPath: /app/data
+    emptyDir: {}
+  tmp:
+    mountPath: /tmp
+    emptyDir:
+      medium: Memory
+      sizeLimit: 64Mi
+
+# NetworkPolicy configuration
+networkPolicy:
+  enabled: true
+  ingressPort: 8000
+  allowDnsEgress: true
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

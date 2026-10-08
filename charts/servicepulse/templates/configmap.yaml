@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "servicepulse.fullname" . }}-config
+  labels:
+    {{- include "servicepulse.labels" . | nindent 4 }}
+data:
+  APP_ENV: {{ .Values.config.appEnv | quote }}
+  APP_PORT: {{ .Values.config.appPort | quote }}
+  APP_HOST: {{ .Values.config.appHost | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  DATABASE_URL: {{ .Values.config.databaseUrl | quote }}
+  FAILURE_SIMULATION_ENABLED: {{ .Values.config.failureSimulationEnabled | quote }}

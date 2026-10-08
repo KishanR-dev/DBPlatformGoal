@@ -1,0 +1,23 @@
+# ==============================================================================
+# PROD ENVIRONMENT VALUES (EXAMPLE / REFERENCE ONLY — NOT DEPLOYED)
+# ==============================================================================
+# This file illustrates how production parameters could be defined once
+# multi-replica infrastructure (e.g. PostgreSQL, HPA) is established.
+# Status: Architectural Example (Not deployed in local kind cluster phase)
+# ==============================================================================
+
+config:
+  appEnv: "production"
+  logLevel: "WARNING"
+
+image:
+  pullPolicy: IfNotPresent
+  tag: "git-f549433"
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi

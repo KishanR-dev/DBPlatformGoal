@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: servicepulse-config
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/name: servicepulse
+    app.kubernetes.io/component: backend
+data:
+  APP_ENV: "production"
+  APP_PORT: "8000"
+  APP_HOST: "0.0.0.0"
+  LOG_LEVEL: "INFO"
+  DATABASE_URL: "sqlite:////app/data/servicepulse.db"
+  FAILURE_SIMULATION_ENABLED: "false"

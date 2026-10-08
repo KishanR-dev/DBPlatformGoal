@@ -1,0 +1,11 @@
+# Patterns to ignore when packaging Helm chart
+.DS_Store
+*.swp
+*~
+.git/
+.gitignore
+.gitattributes
+.vscode/
+.idea/
+*.tgz
+*.tar.gz

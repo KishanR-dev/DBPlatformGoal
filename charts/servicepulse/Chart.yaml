@@ -1,0 +1,8 @@
+apiVersion: v2
+name: servicepulse
+description: Production Operations & Incident Management Platform Helm Chart for DB Platform Engineering
+type: application
+version: 0.1.0
+appVersion: "1.1.0"
+maintainers:
+  - name: DB Platform Engineering Team

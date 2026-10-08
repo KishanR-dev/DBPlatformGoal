@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: servicepulse
+  labels:
+    app.kubernetes.io/name: servicepulse
+    app.kubernetes.io/part-of: db-platform-portfolio

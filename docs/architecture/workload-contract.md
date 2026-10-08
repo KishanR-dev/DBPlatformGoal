@@ -44,6 +44,23 @@ All facts below were directly inspected and verified from `E:\Projects\VSCode\Po
 | **Existing Compose** | `docker-compose.yml:1-26` | Service `servicepulse`, maps port 8000:8000, mounts volume `./data:/app/data`, defines healthcheck via python `urllib`. | Verified from existing project |
 | **Smoke Suite** | `scripts/smoke_test.py:1-150` | Standalone zero-dependency Python script testing `/`, `/health`, and `/api/v1/metrics`. | Verified from existing project |
 
+### 2.1 Source Strategy & Minimum Legitimate Application Source Set
+
+To maintain total repository self-containment for `DBPlatformGoal` without modifying `WiproGoal` or creating an unportable Windows filesystem dependency in future GitLab CI/CD environments, the smallest legitimate application source boundary is defined and imported into `src/servicepulse/`:
+
+- **Included Assets (Minimum Set):**
+  - `app/` — Full application package (`api/`, `core/`, `db/`, `domain/`, `repositories/`, `schemas/`, `services/`, `__init__.py`, `main.py`).
+  - `requirements.txt` — Frozen core runtime dependencies (`fastapi`, `uvicorn`, `pydantic`, `pydantic-settings`, `sqlalchemy`, `python-dotenv`).
+  - `pyproject.toml` — Package metadata and project configuration.
+- **Excluded Assets (Out of Runtime Scope):**
+  - `tests/` — Test suites (not required for runtime image execution).
+  - `benchmarks/` — Performance testing scripts.
+  - `docs/` — Application documentation.
+  - `scripts/` — Development/host helper scripts.
+  - `venv/`, `.pytest_cache/`, `.ruff_cache/`, `*.pyc` — Ephemeral local environment caches.
+  - `servicepulse.db`, `data/` — Ephemeral database state (clean container initializes DB on startup).
+- **Source Provenance:** Frozen release snapshot from `WiproGoal/servicepulse` (v1.1.0 baseline), keeping WiproGoal strictly read-only. (Design decision)
+
 ---
 
 ## 3. Target Container Contract

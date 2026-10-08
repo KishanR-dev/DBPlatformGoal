@@ -1,0 +1,18 @@
+# Local Development & kind cluster environment values
+# Environment: local kind (3-node cluster: db-platform)
+
+config:
+  appEnv: "development"
+  logLevel: "INFO"
+
+image:
+  pullPolicy: IfNotPresent
+  tag: "git-f549433"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi

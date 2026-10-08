@@ -1,0 +1,12 @@
+# Root generic exclusions
+.git/
+venv/
+.venv/
+src/servicepulse/venv/
+src/servicepulse/.venv/
+__pycache__/
+*.pyc
+.terraform/
+.terraform
+*.tfstate*
+crash.log

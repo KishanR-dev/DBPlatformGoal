@@ -1,0 +1,181 @@
+# ==============================================================================
+# DBPlatformGoal — Root .gitignore
+# DevOps / Platform Engineering Portfolio
+# Target: DB Engineering & Consulting GmbH (Ref: 585821)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Secrets, Credentials & Sensitive Environment Configurations
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*.pub.key
+*id_rsa*
+*id_ed25519*
+*id_ecdsa*
+*.secret
+*.secrets
+credentials
+credentials.json
+secrets.yaml
+secrets.yml
+
+# ------------------------------------------------------------------------------
+# 2. Kubernetes, Cluster State & Local Access Artifacts
+# ------------------------------------------------------------------------------
+kubeconfig
+kubeconfig*
+*kubeconfig.yaml
+*kubeconfig.yml
+*.kubeconfig
+*.kube/
+.kube/
+
+# ------------------------------------------------------------------------------
+# 3. Terraform & Infrastructure as Code State
+# ------------------------------------------------------------------------------
+# Local state files MUST NOT be tracked in source control
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+
+# Terraform runtime cache & downloaded providers/modules
+.terraform/
+.terraform.tfstate*
+
+# Terraform CLI local configuration overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI local configuration file
+.terraformrc
+terraform.rc
+
+# NOTE: .terraform.lock.hcl is explicitly TRACKED (do not ignore)
+# It locks provider dependency versions across platforms.
+
+# ------------------------------------------------------------------------------
+# 4. Helm Packaging & Transient Charts
+# ------------------------------------------------------------------------------
+*.tgz
+.helm/
+helm-*.tar.gz
+
+# ------------------------------------------------------------------------------
+# 5. Docker & Container Local Overrides
+# ------------------------------------------------------------------------------
+docker-compose.override.yml
+docker-compose.override.yaml
+.docker/
+
+# ------------------------------------------------------------------------------
+# 6. Python Runtime, Dependencies & Test Artifacts
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.ruff_cache/
+.mypy_cache/
+
+# ------------------------------------------------------------------------------
+# 7. Operating System & Virtualization Files
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ------------------------------------------------------------------------------
+# 8. Editor & IDE Metadata
+# ------------------------------------------------------------------------------
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# VS Code (ignore workspace user state, keep extensions/settings templates if any)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.vscode/*.log
+
+# ------------------------------------------------------------------------------
+# 9. Logs & Temporary Files
+# ------------------------------------------------------------------------------
+*.log
+logs/
+*.tmp
+*.temp
+tmp/
+temp/

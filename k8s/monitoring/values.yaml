@@ -1,0 +1,75 @@
+# Minimal viable Prometheus deployment for local observability
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: false
+    etcd: false
+    configReloaders: false
+    general: true
+    k8s: true
+    kubeApiserver: false
+    kubeApiserverAvailability: false
+    kubeApiserverSlos: false
+    kubelet: true
+    kubeProxy: false
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: false
+    kubernetesSystem: false
+    network: true
+    node: true
+    nodeExporterAlerting: false
+    nodeExporterRecording: false
+    prometheus: true
+    prometheusOperator: true
+
+# Alertmanager is not needed for demonstrating metric observability and basic incident flow locally
+alertmanager:
+  enabled: false
+
+# Grafana is required for dashboards
+grafana:
+  enabled: true
+  adminPassword: "admin"
+  defaultDashboardsEnabled: true
+
+  # Inject dashboards as ConfigMaps via sidecar
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+
+# Required for platform metrics
+kubeStateMetrics:
+  enabled: true
+
+# Expose node-level metrics
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+  tls:
+    enabled: false
+  admissionWebhooks:
+    enabled: false
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 2h
+    # Look for ServiceMonitors across all namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    # Required to pick up our manual ServiceMonitor
+    serviceMonitorSelector: {}
+    # Light resource limits for local DBPlatform kind cluster
+    resources:
+      requests:
+        memory: 400Mi
+      limits:
+        memory: 1000Mi
+    # No persistent storage needed for local dev
+    storageSpec: {}

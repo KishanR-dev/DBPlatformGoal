@@ -76,7 +76,7 @@ At this current stage:
 - A 7-stage GitLab CI/CD Pipeline (`.gitlab-ci.yml`) is implemented spanning ShellCheck/bash linting, python syntax/style, pytest coverage testing, AST security scanning (Bandit), immutable Docker building, Helm packaging, and declarative `kind` deployment followed by live smoke testing. It is wrapped in a local executor shim (`scripts/ci/local-ci-exec.sh`) to evaluate offline against the host context gracefully (`docs/gitlab/`).
 - A Terraform local provisioning framework is implemented mapping the IaC paradigm to the local runtime. A `.tf` structure initializes the `tehcyx/kind` provider, applying stateful changes to the cluster topology iteratively (proven via successful up-scaling and down-scaling of worker nodes) (`docs/terraform/`).
 - **Newly completed:** A full-featured **Platform Operations & Troubleshooting Lab** has been engineered and validated (`scripts/ops/`, `docs/operations/`). Linux administration, process inspection, routing/DNS diagnostics, Netfilter/iptables packet filtering, controlled failure injection, automated Root Cause Analysis (RCA), and operational runbooks are locally validated.
-- **Prometheus/Grafana observability dashboards have NOT yet been implemented.** They will be constructed incrementally in subsequent phases.
+- **Newly completed:** Prometheus/Grafana observability architecture deployed via Helm on Kubernetes. Engineered PromQL metrics for operational health (RPS, latency, resource bounds), established targeted Grafana dashboards, executed bounded performance validation, and demonstrated observability-led incident correlation.
 
 ---
 

@@ -64,7 +64,7 @@ No professional experience, production uptime, enterprise scale, or cloud certif
 
 ## 4. Current State
 
-> **Phase Status: GitLab CI/CD Pipeline Locally Validated against the DBPlatformGoal Kubernetes/Helm environment**
+> **Phase Status: Terraform Infrastructure-as-Code natively managing the DBPlatformGoal cluster environment**
 
 At this current stage:
 - The local host environment and toolchain have been audited and verified (`docs/environment/toolchain.md`).
@@ -74,7 +74,8 @@ At this current stage:
 - A 3-node `kind` cluster acts as our local development target Kubernetes platform (`docs/kubernetes/`).
 - The raw Kustomize Kubernetes manifests have been logically migrated to a parameterized Helm chart (`charts/servicepulse/`), rendering templates contextually via `values-dev.yaml`. Environment interpolation, syntax linting (`helm lint`), atomic releases (`helm upgrade`), and reversion mechanics (`helm rollback`) are active and validated natively on the cluster (`docs/helm/`).
 - **Newly completed:** A 7-stage GitLab CI/CD Pipeline (`.gitlab-ci.yml`) is implemented spanning linting, pytest coverage testing, AST security scanning (Bandit), immutable Docker building, Helm packaging, and declarative `kind` deployment followed by live smoke testing. It is wrapped in a local executor shim (`scripts/ci/local-ci-exec.sh`) to evaluate offline against the host context gracefully (`docs/gitlab/`).
-- **Terraform IaC automation and Prometheus/Grafana observability have NOT yet been implemented.** They will be constructed incrementally in subsequent phases.
+- **Newly completed:** A Terraform local provisioning framework is implemented mapping the IaC paradigm to the local runtime. A `.tf` structure initializes the `tehcyx/kind` provider, applying stateful changes to the cluster topology iteratively (proven via successful up-scaling and down-scaling of worker nodes) (`docs/terraform/`).
+- **Prometheus/Grafana observability have NOT yet been implemented.** They will be constructed incrementally in subsequent phases.
 
 ---
 
@@ -174,3 +175,4 @@ DBPlatformGoal/
 - **Phase 6 (Declarative Kubernetes & Multi-Node kind Validation):** 3-node kind cluster created, K8s manifests deployed (via Kustomize initially), service discovery and pod security validated, and crash recovery demonstrated (`docs/kubernetes/`).
 - **Phase 8 (Helm Release Engineering):** Packaged the K8s workload into a Helm chart (`charts/servicepulse/`), integrated `values.yaml` parameter overrides (`dev` vs. `prod`), executed atomic upgrades, tested dry-run interpolation, and successfully asserted history rollback recovery logic (`docs/helm/`).
 - **Phase 9 (GitLab CI/CD Integration):** Established `.gitlab-ci.yml` defining an end-to-end 7-stage promotion pipeline (lint, test, security, build, package, deploy, verify). Engineered a local emulator script (`scripts/ci/local-ci-exec.sh`) mirroring GitLab runner context initialization offline to achieve testable pipeline boundaries without requiring active shared SaaS runners (`docs/gitlab/`).
+- **Phase 10 (Infrastructure as Code via Terraform):** Enforced a declarative boundary where Terraform constructs and regulates the platform infrastructure (`db-platform-tf` cluster topology limits) whilst Helm governs the application payloads over it. Successfully tested drift management, immutable destroy/recreate lifecycles, and cluster resizing, tracking provider lock state securely and insulating TF state tracking via `.gitignore` (`docs/terraform/`).

@@ -181,3 +181,10 @@ tmp/
 temp/
 charts/dist/
 *.tar
+
+# Terraform variables containing potentially sensitive settings
+*.tfvars
+*.tfvars.json
+
+# Kind provider generated kubeconfig
+*-config

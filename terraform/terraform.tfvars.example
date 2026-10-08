@@ -1,0 +1,9 @@
+# ==============================================================================
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and adjust as needed
+# DO NOT commit your actual terraform.tfvars file
+# ==============================================================================
+
+# cluster_name = "db-platform-tf"
+# kubernetes_version = "v1.33.1"
+# worker_node_count = 2

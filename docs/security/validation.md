@@ -33,7 +33,7 @@
 | helm lint: 0 failures | ✅ PASS | LOCALLY VALIDATED |
 | Terraform state: no changes | ✅ PASS | LOCALLY VALIDATED |
 | No real secrets committed | ✅ PASS | LOCALLY VALIDATED |
-| platform-reader RBAC manifest created | ✅ CREATED | LOCALLY VALIDATED |
+| platform-reader RBAC manifest applied live | ✅ PASS | LOCALLY VALIDATED |
 | Security incident script created | ✅ CREATED | DESIGNED |
 | Security incident baseline validated | ✅ PASS | LOCALLY VALIDATED |
 

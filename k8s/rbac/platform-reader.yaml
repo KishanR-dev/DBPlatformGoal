@@ -1,0 +1,65 @@
+---
+# RBAC Demonstration — Least-Privilege Platform Reader Identity
+# Purpose: Demonstrate minimum-privilege service-account access for Phase 13 RBAC validation.
+#
+# This ServiceAccount is created in the servicepulse namespace only.
+# It is granted read-only access to pods and endpoints in the same namespace.
+# It explicitly CANNOT:
+#   - list/get secrets in any namespace
+#   - modify deployments, services, or other resources
+#   - access resources in other namespaces
+#
+# EVIDENCE CLASSIFICATION: LOCALLY VALIDATED
+# See: docs/security/rbac.md for kubectl auth can-i validation output.
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: platform-reader
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/component: security
+    app.kubernetes.io/part-of: db-platform-portfolio
+    phase: "13"
+automountServiceAccountToken: false
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: servicepulse-pod-reader
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/component: security
+    app.kubernetes.io/part-of: db-platform-portfolio
+    phase: "13"
+rules:
+  # Allow read-only access to pods in servicepulse namespace only
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  # Allow read access to endpoints (needed by operations tooling)
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list"]
+  # Explicitly: NO secrets, NO deployments, NO nodes, NO cross-namespace access
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: platform-reader-binding
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/component: security
+    app.kubernetes.io/part-of: db-platform-portfolio
+    phase: "13"
+subjects:
+  - kind: ServiceAccount
+    name: platform-reader
+    namespace: servicepulse
+roleRef:
+  kind: Role
+  name: servicepulse-pod-reader
+  apiGroup: rbac.authorization.k8s.io

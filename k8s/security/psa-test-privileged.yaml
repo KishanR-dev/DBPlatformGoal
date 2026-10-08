@@ -1,0 +1,45 @@
+---
+# PSA NEGATIVE TEST — Intentionally Violating Pod
+# Purpose: Demonstrate Pod Security Admission REJECTS a non-compliant pod when
+#          the namespace enforces the 'restricted' policy level.
+#
+# This manifest MUST NOT be applied to the servicepulse namespace.
+# It is applied to the psa-test namespace to demonstrate admission control.
+#
+# Violations present (by design):
+#   - privileged: true                  → fails restricted (privileged mode forbidden)
+#   - runAsNonRoot: false               → fails restricted
+#   - runAsUser: 0 (root)               → fails restricted
+#   - allowPrivilegeEscalation: true    → fails restricted
+#   - no capabilities drop              → fails restricted (ALL must be dropped)
+#   - no seccompProfile                 → fails restricted (RuntimeDefault required)
+#
+# Expected outcome when applied to enforce=restricted namespace:
+#   Error from server (Forbidden):
+#     pods "psa-test-privileged-violation" is forbidden:
+#     violates PodSecurity "restricted:latest":
+#       privileged (container "privileged-container" must not set
+#         securityContext.privileged=true),
+#       allowPrivilegeEscalation != false, unrestricted capabilities,
+#       runAsNonRoot != true, seccompProfile
+#
+# EVIDENCE CLASSIFICATION: LOCALLY VALIDATED
+# See: docs/security/pod-security.md for full captured admission output.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: psa-test-privileged-violation
+  namespace: psa-test
+  labels:
+    test-type: psa-negative
+    phase: "13"
+spec:
+  containers:
+    - name: privileged-container
+      image: nginx:alpine
+      securityContext:
+        privileged: true
+        runAsNonRoot: false
+        runAsUser: 0
+        allowPrivilegeEscalation: true
+        # Deliberately omitting capabilities.drop and seccompProfile

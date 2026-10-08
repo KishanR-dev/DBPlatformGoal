@@ -1,0 +1,25 @@
+---
+# NetworkPolicy: Default deny all ingress/egress for servicepulse namespace
+# Purpose: Baseline deny-all policy; explicit allow policies layer on top.
+# This ensures any pod without a matching allow-rule is isolated by default.
+#
+# EVIDENCE CLASSIFICATION: LOCALLY VALIDATED
+# The active NetworkPolicy on servicepulse is managed by Helm (charts/servicepulse/templates/networkpolicy.yaml).
+# This file documents the conceptual deny-all baseline.
+# Kindnet (nftables) enforces packet-level blocking — confirmed via curl exit 28 test.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/component: network-security
+    app.kubernetes.io/part-of: db-platform-portfolio
+    phase: "13"
+spec:
+  # Selects ALL pods in this namespace
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  # No ingress or egress rules → deny all

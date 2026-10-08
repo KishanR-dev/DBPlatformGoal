@@ -15,6 +15,12 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: "servicepulse"
 
+# Service account configuration
+# automount: false because ServicePulse does not use the Kubernetes API.
+# Disabling prevents in-cluster API token from being available to the process.
+serviceAccount:
+  automount: false
+
 # Non-secret application runtime configuration
 config:
   appEnv: "production"

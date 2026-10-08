@@ -1,0 +1,52 @@
+---
+# PSA POSITIVE TEST — Compliant Pod
+# Purpose: Demonstrate Pod Security Admission ADMITS a compliant pod when
+#          the namespace enforces the 'restricted' policy level.
+#
+# All restricted-policy requirements satisfied:
+#   - privileged: false (default, explicitly absent)
+#   - runAsNonRoot: true
+#   - runAsUser: 1000 (non-root UID)
+#   - allowPrivilegeEscalation: false
+#   - capabilities: drop ALL, add none
+#   - readOnlyRootFilesystem: true
+#   - seccompProfile: RuntimeDefault
+#
+# Expected outcome when applied to enforce=restricted namespace:
+#   pod/psa-test-compliant created
+#
+# EVIDENCE CLASSIFICATION: LOCALLY VALIDATED
+# See: docs/security/pod-security.md for full captured admission output.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: psa-test-compliant
+  namespace: psa-test
+  labels:
+    test-type: psa-positive
+    phase: "13"
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: compliant-container
+      image: curlimages/curl:8.6.0
+      command: ["sh", "-c", "echo 'PSA compliant pod is running'; sleep 30"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 50m
+          memory: 32Mi

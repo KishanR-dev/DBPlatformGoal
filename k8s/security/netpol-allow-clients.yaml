@@ -1,0 +1,60 @@
+---
+# NetworkPolicy: Allow labelled clients from any namespace to reach servicepulse
+# Purpose: Explicit allow-list for legitimate callers (e.g., monitoring, CI smoke tests)
+#
+# This replaces the overly-broad "allow all ingress from cluster" rule with one that
+# requires callers to carry the label: netpol/access-servicepulse: "true"
+#
+# Traffic model:
+#   client (label: netpol/access-servicepulse=true) → port 8000 → servicepulse pod
+#   Prometheus (label: release=kube-prometheus-stack) → port 8000 → servicepulse pod
+#   Unlabelled pod → port 8000 → DENY
+#
+# EVIDENCE CLASSIFICATION: LOCALLY VALIDATED
+# See: docs/security/network-policy.md for actual connectivity test evidence.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: servicepulse-allow-clients
+  namespace: servicepulse
+  labels:
+    app.kubernetes.io/component: network-security
+    app.kubernetes.io/part-of: db-platform-portfolio
+    phase: "13"
+spec:
+  podSelector:
+    matchLabels:
+      app: servicepulse
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow specifically-labelled clients (controlled allow-list)
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              netpol/access-servicepulse: "true"
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow Prometheus scraping from monitoring namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # Allow DNS resolution
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow outbound to monitoring (Prometheus pushgateway if needed)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring

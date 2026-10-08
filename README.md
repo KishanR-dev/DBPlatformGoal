@@ -64,7 +64,7 @@ No professional experience, production uptime, enterprise scale, or cloud certif
 
 ## 4. Current State
 
-> **Phase Status: Linux Platform Operations, Bash Automation, Networking Diagnostics, and Firewall Troubleshooting Lab Locally Validated**
+> **Phase Status: Kubernetes Security Hardening and Network-Boundary Enforcement Locally Validated**
 
 At this current stage:
 - The local host environment and toolchain have been audited and verified (`docs/environment/toolchain.md`).
@@ -75,8 +75,9 @@ At this current stage:
 - The raw Kustomize Kubernetes manifests have been logically migrated to a parameterized Helm chart (`charts/servicepulse/`), rendering templates contextually via `values-dev.yaml`. Environment interpolation, syntax linting (`helm lint`), atomic releases (`helm upgrade`), and reversion mechanics (`helm rollback`) are active and validated natively on the cluster (`docs/helm/`).
 - A 7-stage GitLab CI/CD Pipeline (`.gitlab-ci.yml`) is implemented spanning ShellCheck/bash linting, python syntax/style, pytest coverage testing, AST security scanning (Bandit), immutable Docker building, Helm packaging, and declarative `kind` deployment followed by live smoke testing. It is wrapped in a local executor shim (`scripts/ci/local-ci-exec.sh`) to evaluate offline against the host context gracefully (`docs/gitlab/`).
 - A Terraform local provisioning framework is implemented mapping the IaC paradigm to the local runtime. A `.tf` structure initializes the `tehcyx/kind` provider, applying stateful changes to the cluster topology iteratively (proven via successful up-scaling and down-scaling of worker nodes) (`docs/terraform/`).
-- **Newly completed:** A full-featured **Platform Operations & Troubleshooting Lab** has been engineered and validated (`scripts/ops/`, `docs/operations/`). Linux administration, process inspection, routing/DNS diagnostics, Netfilter/iptables packet filtering, controlled failure injection, automated Root Cause Analysis (RCA), and operational runbooks are locally validated.
-- **Newly completed:** Prometheus/Grafana observability architecture deployed via Helm on Kubernetes. Engineered PromQL metrics for operational health (RPS, latency, resource bounds), established targeted Grafana dashboards, executed bounded performance validation, and demonstrated observability-led incident correlation.
+- **Completed:** A full-featured **Platform Operations & Troubleshooting Lab** has been engineered and validated (`scripts/ops/`, `docs/operations/`). Linux administration, process inspection, routing/DNS diagnostics, Netfilter/iptables packet filtering, controlled failure injection, automated Root Cause Analysis (RCA), and operational runbooks are locally validated.
+- **Completed:** Prometheus/Grafana observability architecture deployed via Helm on Kubernetes. Engineered PromQL metrics for operational health (RPS, latency, resource bounds), established targeted Grafana dashboards, executed bounded performance validation, and demonstrated observability-led incident correlation.
+- **Newly completed — Phase 13:** Kubernetes security hardening and network-boundary enforcement locally validated through Pod Security Admission (`restricted` policy enforced on the `servicepulse` namespace), least-privilege security contexts (non-root UID 1000, `readOnlyRootFilesystem`, `capabilities.drop ALL`, `seccompProfile: RuntimeDefault`), controlled PSA positive and negative admission tests, `automountServiceAccountToken: false` for the application pod, RBAC least-privilege role (`platform-reader`), and NetworkPolicy data-plane enforcement confirmed via kindnet nftables (packet-level block proven with curl exit-28 test). Python supply-chain security validated with bandit (0 issues) and pip-audit (0 known CVEs). Documents and validation evidence in `docs/security/`.
 
 ---
 

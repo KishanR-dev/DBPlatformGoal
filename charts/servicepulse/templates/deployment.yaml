@@ -24,6 +24,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      # Disable automatic service account token mounting — ServicePulse does not
+      # require Kubernetes API access. Disabling this reduces the attack surface
+      # by preventing any compromised process from using the in-cluster API token.
+      automountServiceAccountToken: {{ .Values.serviceAccount.automount | default false }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

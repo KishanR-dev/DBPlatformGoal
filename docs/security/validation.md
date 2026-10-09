@@ -1,7 +1,7 @@
 # Security Validation Results — Phase 13
 
-**Date:** 2026-10-08  
-**Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)  
+**Date:** 2026-10-08
+**Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)
 **Evidence Classification:** Claims explicitly marked VERIFIED / LOCALLY VALIDATED / DESIGNED / NOT TESTED
 
 ---

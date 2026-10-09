@@ -1,7 +1,7 @@
 # Pod Security — Phase 13
 
-**Evidence Classification:** LOCALLY VALIDATED  
-**Kubernetes version:** v1.33.1  
+**Evidence Classification:** LOCALLY VALIDATED
+**Kubernetes version:** v1.33.1
 **Cluster:** `db-platform-tf` (kind)
 
 ---

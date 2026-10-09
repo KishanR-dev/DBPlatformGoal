@@ -1,9 +1,9 @@
 # Security Incident RCA — Phase 13
 
-**Evidence Classification:** LOCALLY VALIDATED  
-**Incident Type:** NetworkPolicy Misconfiguration  
-**Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)  
-**CNI:** kindnet (nftables enforcement)  
+**Evidence Classification:** LOCALLY VALIDATED
+**Incident Type:** NetworkPolicy Misconfiguration
+**Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)
+**CNI:** kindnet (nftables enforcement)
 **Script:** `scripts/security/incident-networkpolicy.sh`
 
 ---

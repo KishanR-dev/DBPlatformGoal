@@ -1,16 +1,15 @@
 # DBPlatformGoal: Platform Engineering Portfolio Brief
 
-**Target Role:** DevOps Engineer / Platform Engineer (DB Engineering & Consulting GmbH)  
-**Job Reference:** 585821  
+**Role Focus:** DevOps Engineer / Platform Engineer
 **Live Pipeline Evidence:** [GitLab Pipeline #2928691505](https://gitlab.com/KishanR-dev/DBPlatformGoal/-/pipelines/2928691505)
 
 ---
 
 ## 1. Project Overview & Engineering Problem
 
-This repository demonstrates an evidence-first platform engineering workflow. The engineering problem was to take a raw, containerized workload (a modular monolith called ServicePulse) and build a cohesive operational platform around it. 
+This repository demonstrates an evidence-first platform engineering workflow. The engineering problem was to take a raw, containerized workload (a modular monolith called ServicePulse) and build a cohesive operational platform around it.
 
-Rather than presenting isolated tutorials, this portfolio presents a complete, end-to-end cloud-native lifecycle—spanning immutable infrastructure provisioning, declarative packaging, enterprise-grade CI/CD automation, and hardened observability. It is specifically engineered to demonstrate the technical competencies required by the DB E&C DevOps Engineer role.
+Rather than presenting isolated tutorials, this portfolio presents a complete, end-to-end cloud-native lifecycle—spanning immutable infrastructure provisioning, declarative packaging, enterprise-grade CI/CD automation, and hardened observability. It is engineered to demonstrate core platform engineering competencies in a reproducible environment.
 
 ## 2. Architecture & End-to-End Delivery Flow
 
@@ -31,7 +30,7 @@ Technologies were selected to demonstrate core platform mechanics rather than ju
 
 ## 4. CI/CD Pipeline & Live Execution Evidence
 
-The core automation mechanism is a robust `.gitlab-ci.yml` pipeline featuring 7 stages (`validate`, `test`, `security`, `build`, `package`, `deploy`, `verify`) enforcing safety constraints before deployment. 
+The core automation mechanism is a robust `.gitlab-ci.yml` pipeline featuring 7 stages (`validate`, `test`, `security`, `build`, `package`, `deploy`, `verify`) enforcing safety constraints before deployment.
 
 **Execution Evidence:** The pipeline was executed live via a registered self-hosted WSL2 Shell Executor to navigate local volume-mount constraints while proving CI integrity. Full stage-by-stage logs, duration (243s total), and status are documented in [Pipeline Execution Evidence](gitlab/pipeline-evidence.md).
 

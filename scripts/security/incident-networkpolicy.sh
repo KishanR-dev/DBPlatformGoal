@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Phase 13 — Controlled Security Incident: NetworkPolicy Misconfiguration
-# DBPlatformGoal / DB E&C DevOps Platform Engineering Portfolio
+# DBPlatformGoal / Platform Engineering Portfolio
 # ==============================================================================
 #
 # INCIDENT SCENARIO:

@@ -1,10 +1,10 @@
 # Platform Networking Fundamentals & Diagnostics Guide
 
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Job Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Phase:** Phase 11 — Linux Platform Operations & Troubleshooting Lab  
-**Status:** Implemented & Locally Validated  
+**Project:** DB Platform Engineering Portfolio
+
+
+**Phase:** Phase 11 — Linux Platform Operations & Troubleshooting Lab
+**Status:** Implemented & Locally Validated
 
 ---
 
@@ -30,9 +30,9 @@ ip -br addr
 ```
 
 ```text
-lo               UNKNOWN        127.0.0.1/8 10.255.255.254/32 ::1/128 
-eth0             UP             172.26.80.78/20 fe80::215:5dff:fe13:dbe/64 
-docker0          DOWN           172.17.0.1/16 
+lo               UNKNOWN        127.0.0.1/8 10.255.255.254/32 ::1/128
+eth0             UP             172.26.80.78/20 fe80::215:5dff:fe13:dbe/64
+docker0          DOWN           172.17.0.1/16
 ```
 
 - **`lo` (Loopback):** Localhost socket routing.
@@ -50,9 +50,9 @@ ip route show
 ```
 
 ```text
-default via 172.26.80.1 dev eth0 proto kernel 
-172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown 
-172.26.80.0/20 dev eth0 proto kernel scope link src 172.26.80.78 
+default via 172.26.80.1 dev eth0 proto kernel
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown
+172.26.80.0/20 dev eth0 proto kernel scope link src 172.26.80.78
 ```
 
 #### Routing Logic:
@@ -132,11 +132,11 @@ ss -tuln
 
 ```text
 Netid State  Recv-Q Send-Q  Local Address:Port  Peer Address:Port
-tcp   LISTEN 0      4096        127.0.0.1:58918      0.0.0.0:*   
-tcp   LISTEN 0      4096        127.0.0.1:34431      0.0.0.0:*   
-tcp   LISTEN 0      1000   10.255.255.254:53         0.0.0.0:*   
-tcp   LISTEN 0      4096       127.0.0.54:53         0.0.0.0:*   
-tcp   LISTEN 0      4096    127.0.0.53%lo:53         0.0.0.0:*   
+tcp   LISTEN 0      4096        127.0.0.1:58918      0.0.0.0:*
+tcp   LISTEN 0      4096        127.0.0.1:34431      0.0.0.0:*
+tcp   LISTEN 0      1000   10.255.255.254:53         0.0.0.0:*
+tcp   LISTEN 0      4096       127.0.0.54:53         0.0.0.0:*
+tcp   LISTEN 0      4096    127.0.0.53%lo:53         0.0.0.0:*
 ```
 
 - **`58918` / `34431`:** Forwarded ports for the `db-platform-tf` and `db-platform` Kubernetes API servers.

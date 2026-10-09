@@ -24,7 +24,7 @@ No resources found in servicepulse namespace.
 ```
 
 ### 4. Correlation
-The dashboard confirms the state change, dropping metrics gracefully and indicating complete offline failure. The metrics confirm the deployment engine intentionally reaped the instances. 
+The dashboard confirms the state change, dropping metrics gracefully and indicating complete offline failure. The metrics confirm the deployment engine intentionally reaped the instances.
 
 ### 5. Resolution & Recovery
 ```bash

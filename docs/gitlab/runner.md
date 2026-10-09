@@ -5,7 +5,7 @@ As part of Phase 14B of the DB Platform delivery, the platform utilizes a **live
 
 ## Local Runner Strategy
 
-While enterprise GitLab environments utilize isolated `docker` executors leveraging DinD (Docker-in-Docker) or Kubernetes scaling, executing a seamless integration via WSL2 and Docker Desktop introduces unique bind-mount incompatibilities (`-v $CI_PROJECT_DIR:/builds/project`) due to path resolution cross-boundaries. 
+While enterprise GitLab environments utilize isolated `docker` executors leveraging DinD (Docker-in-Docker) or Kubernetes scaling, executing a seamless integration via WSL2 and Docker Desktop introduces unique bind-mount incompatibilities (`-v $CI_PROJECT_DIR:/builds/project`) due to path resolution cross-boundaries.
 
 To resolve this seamlessly while retaining the integrity of a real GitLab CI pipeline, the runner runs as a **Shell Executor** (`executor = "shell"`) natively on WSL2.
 

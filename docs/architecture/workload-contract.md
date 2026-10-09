@@ -1,20 +1,20 @@
 # Workload & Container Contract — ServicePulse Reference Workload
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Reference Source:** `E:\Projects\VSCode\PostOmniroute\WiproGoal\servicepulse` (READ-ONLY)  
-**Status:** Approved Architectural Contract — Implementation Ready  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+
+**Status:** Approved Architectural Contract — Implementation Ready
 
 ---
 
 ## 1. Workload Identity
 
-**What ServicePulse is:**  
+**What ServicePulse is:**
 ServicePulse is a modular monolith production operations and incident management service developed using FastAPI (Python 3.12), SQLAlchemy 2.0, and Pydantic v2. It provides customer service request lifecycle orchestration, incident state machines with root-cause analysis (RCA) tracking, Prometheus-compatible metric exposition, and JSON-structured audit logging.
 
-**Why it serves as the DB Platform reference workload:**  
+**Why it serves as the DB Platform reference workload:**
 Instead of operating an unrealistic "hello-world" container or an unvetted third-party demo, the DB Platform Engineering portfolio operates ServicePulse because:
 1. **Realistic Lifecycle:** It features distinct startup, database initialization, health probes, and shutdown lifecycles.
 2. **Integrated Observability:** It exposes standard Prometheus metrics (`/api/v1/metrics`) and structured JSON logs with correlation IDs.
@@ -24,9 +24,9 @@ Instead of operating an unrealistic "hello-world" container or an unvetted third
 
 ---
 
-## 2. Source Evidence from WiproGoal
+## 2. Source Workload Evidence
 
-All facts below were directly inspected and verified from `E:\Projects\VSCode\PostOmniroute\WiproGoal\servicepulse` on 2025-10-08:
+All facts below describe the inspected application baseline:
 
 | Subsystem / Property | Source File | Inspected Fact | Classification |
 |---|---|---|---|
@@ -46,7 +46,7 @@ All facts below were directly inspected and verified from `E:\Projects\VSCode\Po
 
 ### 2.1 Source Strategy & Minimum Legitimate Application Source Set
 
-To maintain total repository self-containment for `DBPlatformGoal` without modifying `WiproGoal` or creating an unportable Windows filesystem dependency in future GitLab CI/CD environments, the smallest legitimate application source boundary is defined and imported into `src/servicepulse/`:
+To maintain total repository self-containment for the platform without creating external filesystem dependencies in CI/CD environments, the application source boundary is encapsulated directly in `src/servicepulse/`:
 
 - **Included Assets (Minimum Set):**
   - `app/` — Full application package (`api/`, `core/`, `db/`, `domain/`, `repositories/`, `schemas/`, `services/`, `__init__.py`, `main.py`).
@@ -59,7 +59,7 @@ To maintain total repository self-containment for `DBPlatformGoal` without modif
   - `scripts/` — Development/host helper scripts.
   - `venv/`, `.pytest_cache/`, `.ruff_cache/`, `*.pyc` — Ephemeral local environment caches.
   - `servicepulse.db`, `data/` — Ephemeral database state (clean container initializes DB on startup).
-- **Source Provenance:** Frozen release snapshot from `WiproGoal/servicepulse` (v1.1.0 baseline), keeping WiproGoal strictly read-only. (Design decision)
+- **Source Provenance:** Stable application baseline. (Design decision)
 
 ---
 
@@ -183,25 +183,25 @@ Configuration is strictly divided into three isolated tiers:
 
 The platform operating environment must deterministically answer these 10 operational questions:
 
-1. **What image should I run?**  
-   `dbplatform/servicepulse:<immutable-tag>`, built deterministically via the multi-stage Dockerfile from WiproGoal source. (Design decision)
-2. **What port should I expose?**  
+1. **What image should I run?**
+   `dbplatform/servicepulse:<immutable-tag>`, built deterministically via the multi-stage Dockerfile from the upstream source. (Design decision)
+2. **What port should I expose?**
    Container port `8000` TCP, mapped to Service port `80`. (Verified from existing project)
-3. **How do I know the application is healthy?**  
+3. **How do I know the application is healthy?**
    `GET /health` returns HTTP 200 and JSON with `"status": "healthy"`. (Verified from existing project)
-4. **What configuration does it need?**  
+4. **What configuration does it need?**
    `APP_ENV`, `APP_PORT`, `LOG_LEVEL`, `DATABASE_URL`, supplied via Kubernetes ConfigMap. (Verified from existing project)
-5. **What secrets does it need?**  
+5. **What secrets does it need?**
    Zero secrets required for SQLite; PostgreSQL connection string required if relational DB is attached. (Verified from existing project)
-6. **How much CPU/memory does it initially need?**  
+6. **How much CPU/memory does it initially need?**
    Initial design requests: `100m` CPU, `128Mi` RAM. Limits: `500m` CPU, `256Mi` RAM. (Design decision)
-7. **How should it shut down?**  
+7. **How should it shut down?**
    Send `SIGTERM`. uvicorn drains in-flight requests and executes lifespan teardown within 30 seconds. (Verified from existing project)
-8. **How should it be upgraded?**  
+8. **How should it be upgraded?**
    Update deployment image tag $\to$ Kubernetes initiates RollingUpdate $\to$ startup probe validates new pod before old pod is terminated. (Design decision)
-9. **How should it be rolled back?**  
+9. **How should it be rolled back?**
    `kubectl rollout undo deployment/servicepulse` or redeploying prior image tag via GitLab CI. (Design decision)
-10. **How should failures be detected?**  
+10. **How should failures be detected?**
     Pod crashes via Kubernetes restart count; probe failures via `Unhealthy` events in `kubectl describe`; error rates via Prometheus `http_requests_total{status=~"5.."}` alerts. (Design decision)
 
 ---
@@ -221,7 +221,7 @@ The platform operating environment must deterministically answer these 10 operat
 
 Every claim in this document is explicitly bounded by this classification:
 
-- **Verified from existing project:** Fact verified by direct inspection of code or configuration in `WiproGoal/servicepulse`.
+- **Verified from existing project:** Fact verified by direct inspection of code or application configuration.
 - **Design decision:** Architectural choice made for `DBPlatformGoal` based on platform engineering best practices and job requirements.
 - **Planned:** Future capability or enhancement scheduled for later portfolio phases.
 - **Not yet tested:** Proposed behavior or value that has not yet been executed in a running cluster or test suite.

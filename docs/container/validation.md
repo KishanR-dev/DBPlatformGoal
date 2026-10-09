@@ -1,11 +1,11 @@
 # Container Validation & Runtime Test Evidence
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Image Under Test:** `dbplatform/servicepulse:git-f549433` (`sha256:08e4ac90b3f5131284b74c310c946b117ccb28b9fd381161d399953191a687d1`)  
-**Status:** Comprehensive Local Runtime Validation Complete  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+**Image Under Test:** `dbplatform/servicepulse:git-f549433` (`sha256:08e4ac90b3f5131284b74c310c946b117ccb28b9fd381161d399953191a687d1`)
+**Status:** Comprehensive Local Runtime Validation Complete
 
 ---
 
@@ -30,8 +30,8 @@ Configured User:       1000:1000 (appuser)
 Working Directory:     /app
 Exposed Ports:         8000/tcp
 CMD Entrypoint:        ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
-Environment Defaults:  PYTHONPATH=/app, APP_ENV=production, APP_HOST=0.0.0.0, APP_PORT=8000, 
-                       LOG_LEVEL=INFO, DATABASE_URL=sqlite:////app/data/servicepulse.db, 
+Environment Defaults:  PYTHONPATH=/app, APP_ENV=production, APP_HOST=0.0.0.0, APP_PORT=8000,
+                       LOG_LEVEL=INFO, DATABASE_URL=sqlite:////app/data/servicepulse.db,
                        PYTHONUNBUFFERED=1, PYTHONDONTWRITEBYTECODE=1
 Files in /app:         drwxr-xr-x app (code), drwx------ data (empty data dir), pyproject.toml
 Secret Files Present:  None (No .env, .pem, .key, credentials, or git metadata in image)
@@ -108,11 +108,11 @@ Secret Files Present:  None (No .env, .pem, .key, credentials, or git metadata i
 
 ### Test 5: Read-Only Root Filesystem & Privilege Dropping
 - **Execution Flags:**
-  `--read-only`  
-  `--cap-drop=ALL`  
-  `--security-opt=no-new-privileges`  
-  `--tmpfs /tmp:rw,noexec,nosuid,size=64m,mode=1777`  
-  `-v servicepulse-hardened-data:/app/data`  
+  `--read-only`
+  `--cap-drop=ALL`
+  `--security-opt=no-new-privileges`
+  `--tmpfs /tmp:rw,noexec,nosuid,size=64m,mode=1777`
+  `-v servicepulse-hardened-data:/app/data`
 - **Test Actions & Outcomes:**
   1. `POST /api/v1/requests` with payload `{"customer_id": "CUST-001", "request_type": "SERVICE", "description": "Hardened test"}` $\to$ **HTTP 201 Created** (`REQ-73B9817B`). Confirms SQLite WAL writes to `/app/data` succeed under read-only rootfs.
   2. `touch /app/rootfs-test.txt` $\to$ **Failed with `Read-only file system`** (Expected security constraint).

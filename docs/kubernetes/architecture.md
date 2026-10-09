@@ -1,11 +1,11 @@
 # Kubernetes Architecture & Workload Design — ServicePulse
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Target Cluster:** `db-platform` (Multi-node local kind cluster)  
-**Status:** Implemented & Locally Validated  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+**Target Cluster:** `db-platform` (Multi-node local kind cluster)
+**Status:** Implemented & Locally Validated
 
 ---
 

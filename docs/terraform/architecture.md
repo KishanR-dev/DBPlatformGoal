@@ -12,7 +12,7 @@ This document describes the Infrastructure as Code (IaC) architecture for the DB
 
 For this local delivery environment, we observe a strict separation of concerns to avoid duplication of state and unexpected lifecycle behaviors.
 
-- **Terraform owns:** The platform infrastructure (Kubernetes cluster topology, nodes, API boundaries). 
+- **Terraform owns:** The platform infrastructure (Kubernetes cluster topology, nodes, API boundaries).
 - **Helm / GitLab CI owns:** The application payload delivery (ServicePulse Helm Chart).
 
 Terraform stops at the cluster boundary. This confirms proper layered separation observed in professional cloud provisioning models (e.g., EKS provisioned by Terraform; workloads managed by Helm/ArgoCD).

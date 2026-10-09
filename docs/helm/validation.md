@@ -24,7 +24,7 @@ This document records the exact steps taken to validate the declarative templati
   STATUS: deployed
   REVISION: 1
   ```
-- **Runtime Verification**: 
+- **Runtime Verification**:
   - Probes resolved within standard timeout limit.
   - Test from internal container against Cluster DNS passed:
     - `/health`: Resulted in 200 OK.
@@ -44,10 +44,10 @@ This document records the exact steps taken to validate the declarative templati
 - **Evidence**:
   ```text
   Rollback was a success! Happy Helming!
-  
-  REVISION  UPDATED                   STATUS       CHART               DESCRIPTION     
+
+  REVISION  UPDATED                   STATUS       CHART               DESCRIPTION
   1         ...                       superseded   servicepulse-0.1.0  Install complete
   2         ...                       superseded   servicepulse-0.1.0  Upgrade complete
   3         ...                       deployed     servicepulse-0.1.0  Rollback to 1
   ```
-- **Conclusion**: Helm acts as a robust release pipeline manager matching DB E&C standards. Rollbacks maintain zero downtime during rapid remediation.
+- **Conclusion**: Helm acts as a robust release pipeline manager enforcing operational visibility. Rollbacks maintain zero downtime during rapid remediation.

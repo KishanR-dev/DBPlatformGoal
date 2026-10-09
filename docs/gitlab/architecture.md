@@ -1,7 +1,7 @@
 # GitLab CI/CD Pipeline Architecture
 
 ## Overview
-The `DBPlatformGoal` project utilizes GitLab CI/CD to orchestrate an end-to-end continuous integration and delivery pipeline. This mechanism codifies the build, security, packaging, deployment, and live verification criteria required by DB Engineering & Consulting GmbH standards into a deterministic sequence of events.
+The `DBPlatformGoal` project utilizes GitLab CI/CD to orchestrate an end-to-end continuous integration and delivery pipeline. This mechanism codifies the build, security, packaging, deployment, and live verification criteria required by enterprise platform standards into a deterministic sequence of events.
 
 ## CI/CD Strategy
 The pipeline is hosted on **GitLab.com** (`KishanR-dev/DBPlatformGoal`) and executed live using a registered local GitLab Runner on Ubuntu WSL2. The pipeline enforces strict gates at every stage: any failure in validation, test coverage, or security scanning immediately halts the promotion cycle.

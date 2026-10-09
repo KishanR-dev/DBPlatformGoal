@@ -25,7 +25,7 @@ charts/servicepulse/
 ## Architectural Decisions
 
 ### 1. Separation of Environments via Value Files
-We decouple the declarative schema from the runtime environment. 
+We decouple the declarative schema from the runtime environment.
 - `values.yaml` provides strict, secure defaults for all properties (e.g. `replicaCount: 1`).
 - `values-dev.yaml` allows laxer logging and mock properties.
 - `values-prod.yaml` enforces rigid production readiness (e.g., higher resource limits or specific taints).
@@ -34,7 +34,7 @@ We decouple the declarative schema from the runtime environment.
 The `replicaCount` defaults to `1` in all environments because ServicePulse relies on a localized SQLite WAL database (`/app/data`). Setting this over 1 without read-write-many standard storage or a decentralized RDBMS like PostgreSQL would cause database corruption or concurrency deadlocks. Horizontal scaling is intentionally gated until state migration.
 
 ### 3. Container Security Passthrough
-The security context configuration maps 1:1 with DB E&C security standards:
+The security context configuration enforces baseline Kubernetes security standards:
 - Rootfs is strictly read-only.
 - The binary executes entirely dropped capabilities (`drop: ["ALL"]`).
 - Volume mounts mapped in `values.yaml` explicitly decouple state boundaries to volatile (`/tmp`) and persistent (`/app/data`) layers.

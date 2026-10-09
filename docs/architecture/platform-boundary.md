@@ -1,28 +1,28 @@
 # Platform Boundary & Architecture Model
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Reference Source:** `E:\Projects\VSCode\PostOmniroute\WiproGoal` (READ-ONLY)  
-**Status:** Approved Architectural Boundary Specification  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+
+**Status:** Approved Architectural Boundary Specification
 
 ---
 
 ## 1. Architectural Boundary & Separation of Concerns
 
-The workspace architecture strictly separates the **Application Workload** from the **Platform Engineering Orchestrator**. This mirrors production enterprise platform engineering environments (such as Deutsche Bank), where platform teams provide self-service infrastructure, automated pipelines, orchestration, security gates, and observability without directly modifying or polluting developer application repositories.
+The workspace architecture strictly separates the **Application Workload** from the **Platform Engineering Orchestrator**. This mirrors production enterprise platform engineering environments, where platform teams provide self-service infrastructure, automated pipelines, orchestration, security gates, and observability without directly modifying or polluting developer application repositories.
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│ WORKSPACE: WiproGoal (READ-ONLY REFERENCE SOURCE)                      │
+│ UPSTREAM APPLICATION WORKLOAD (src/servicepulse)                       │
 │                                                                        │
 │  - Application source code (FastAPI, Python 3.12)                      │
 │  - Domain models & database schema (SQLAlchemy)                        │
 │  - Reference multi-stage Dockerfile                                    │
 │  - Unit & smoke test suites                                            │
 │                                                                        │
-│  [STATUS: READ-ONLY — ZERO COMMITS / ZERO WRITES / NO MUTATION]        │
+│  [STATUS: STABLE WORKLOAD BASELINE]                                    │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
                          Source / Build Contract
@@ -45,20 +45,18 @@ The workspace architecture strictly separates the **Application Workload** from 
 
 ---
 
-## 2. Why WiproGoal Is Strictly Read-Only
+## 2. Decoupled Workload Principles
 
-1. **Portfolio Integrity & Evidence Provenance:**  
-   `WiproGoal` is a previously evaluated, functional application codebase. Maintaining it as strictly read-only guarantees that all platform artifacts in `DBPlatformGoal` are proven to operate against an unmodified, realistic application source rather than a custom-tailored toy codebase modified to make platform engineering easy. (Design decision)
-2. **True Platform/Developer Decoupling:**  
-   Platform engineers rarely have write access to every upstream microservice codebase in an enterprise. Platform artifacts (Helm charts, Terraform modules, CI templates, cluster configurations) must consume standard build outputs and environment variables without requiring code changes to the application. (Design decision)
-3. **Auditability:**  
-   Zero git mutations in `WiproGoal` ensures that any technical reviewer can independently verify that the application code was not tampered with during the platform engineering evaluation. (Design decision)
+1. **Portfolio Integrity & Decoupling:**
+   The application source (`src/servicepulse`) is maintained as a stable, decoupled codebase. This guarantees that all platform artifacts in `DBPlatformGoal` are proven to operate against realistic application source patterns rather than custom-tailored toy setups designed to simplify platform engineering. (Design decision)
+2. **True Platform/Developer Decoupling:**
+   Platform engineers rarely modify upstream microservice business logic. Platform artifacts (Helm charts, Terraform modules, CI templates, cluster configurations) must consume standard build outputs and environment variables without requiring intrusive application rewrites. (Design decision)
+3. **Auditability:**
+   A clear boundary between application code and platform manifests ensures any technical reviewer can easily differentiate application runtime logic from infrastructure automation. (Design decision)
 
 ---
 
-## 3. Platform Layer Taxonomy in DBPlatformGoal
-
-`DBPlatformGoal` provides 8 modular platform layers designed to satisfy the competency requirements of DB E&C Job Ref 585821:
+## 3. Platform Layer Taxonomy
 
 ### Layer 1: Containerization & Build Packaging
 - **Artifacts:** Target production Dockerfile, `.dockerignore`, container build automation scripts.
@@ -106,18 +104,17 @@ The workspace architecture strictly separates the **Application Workload** from 
 
 ## 4. Workspace Interaction Rules
 
-To maintain strict boundaries between workspaces, the following operational rules are enforced:
+To maintain strict boundaries, the following operational rules are enforced:
 
-1. **Read-Only Ingestion:** Any scripts or commands referencing `WiproGoal` must do so as a read-only source directory (e.g., `docker build -f Dockerfile ../WiproGoal/servicepulse`).
-2. **Zero Modification:** No file inside `E:\Projects\VSCode\PostOmniroute\WiproGoal` may be created, edited, deleted, or committed to git.
-3. **Isolated Portfolios:** `E:\Projects\VSCode\PostOmniroute\kishan-portfolio` and `E:\Projects\VSCode\PostOmniroute\DevOpsPlatformEngineer` are completely separate and untouched.
-4. **All Outputs in DBPlatformGoal:** All documentation, scripts, charts, manifests, pipeline definitions, and logs must be stored within `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`.
+1. **Decoupled Architecture:** Platform tools and workloads are logically isolated.
+2. **Immutable History:** Operations and diagnostics act upon the runtime state without altering application intent.
+3. **All Outputs in Portfolio Scope:** All documentation, scripts, charts, manifests, pipeline definitions, and logs must be stored within this project repository.
 
 ---
 
 ## 5. Evidence Classification Index
 
-- **Verified from existing project:** Verified facts regarding WiproGoal code structure, endpoints, and existing assets.
+- **Verified from existing project:** Verified facts regarding code structure, endpoints, and existing assets.
 - **Design decision:** Architectural choices defining the 8-layer platform structure in `DBPlatformGoal`.
 - **Planned:** Platform layers, pipelines, and manifests to be implemented in subsequent phases.
 - **Not yet tested:** Configurations that have not yet undergone execution in the local runtime environment.

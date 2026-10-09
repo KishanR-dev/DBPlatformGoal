@@ -1,7 +1,7 @@
 # Container Security — Phase 13
 
-**Evidence Classification:** LOCALLY VALIDATED  
-**Image:** `dbplatform/servicepulse:git-f549433`  
+**Evidence Classification:** LOCALLY VALIDATED
+**Image:** `dbplatform/servicepulse:git-f549433`
 **Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)
 
 ---

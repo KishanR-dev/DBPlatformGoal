@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Phase 13 — Security Validation Script
-# DBPlatformGoal / DB E&C DevOps Platform Engineering Portfolio
+# DBPlatformGoal / Platform Engineering Portfolio
 # ==============================================================================
 #
 # Purpose:

@@ -1,7 +1,7 @@
 # NetworkPolicy — Phase 13
 
-**Evidence Classification:** LOCALLY VALIDATED  
-**CNI:** kindnet (nftables)  
+**Evidence Classification:** LOCALLY VALIDATED
+**CNI:** kindnet (nftables)
 **Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)
 
 ---

@@ -1,7 +1,7 @@
 # Security Architecture — Phase 13
 
-**Portfolio:** DBPlatformGoal — DB E&C DevOps / Platform Engineer (Job Ref: 585821)  
-**Phase:** 13 — Kubernetes Security Hardening  
+**Portfolio:** DBPlatformGoal — DevOps / Platform Engineer Portfolio
+**Phase:** 13 — Kubernetes Security Hardening
 **Evidence Classification:** Claims are explicitly marked VERIFIED, LOCALLY VALIDATED, DESIGNED, or PLANNED.
 
 ---

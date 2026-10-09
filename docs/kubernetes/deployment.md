@@ -1,11 +1,11 @@
 # Kubernetes Deployment & Operations Runbook — ServicePulse
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Target Cluster:** `db-platform` (Multi-node kind cluster)  
-**Status:** Validated Operational Runbook  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+**Target Cluster:** `db-platform` (Multi-node kind cluster)
+**Status:** Validated Operational Runbook
 
 ---
 

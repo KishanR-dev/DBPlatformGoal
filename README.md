@@ -1,9 +1,7 @@
-# DB Platform Engineering Portfolio
+# DevOps Platform Engineering Portfolio
 
-**Target Role:** DevOps Engineer / Platform Engineer  
-**Organization:** Deutsche Bank Engineering & Consulting GmbH — India (DB E&C)  
-**Job Reference:** 585821  
-**Portfolio Repository:** `DBPlatformGoal`  
+**Role Profile:** DevOps Engineer / Platform Engineer
+**Portfolio Repository:** `DBPlatformGoal`
 
 ---
 
@@ -27,7 +25,7 @@ Rather than presenting isolated tutorials or superficial "hello-world" configura
 
 ## 2. Target Capabilities
 
-The platform engineering capabilities demonstrated across this portfolio directly align with the core requirements of the target role:
+The platform engineering capabilities demonstrated across this portfolio directly align with core industry requirements:
 
 | Capability Domain | Target Platform Evidence |
 |---|---|
@@ -125,7 +123,6 @@ HARDENING
 DBPlatformGoal/
 ├── .gitignore                      # Conservative source-control exclusions
 ├── README.md                       # Portfolio overview and engineering journey
-├── DISCOVERY_REPORT.md             # Initial capability gap & discovery analysis
 ├── .gitlab-ci.yml                  # 7-stage GitLab delivery pipeline definition (with ShellCheck)
 ├── scripts/
 │   ├── ci/
@@ -188,7 +185,7 @@ DBPlatformGoal/
 
 ## 7. Verification & Audit History
 
-- **Phase 1 (Discovery):** Comprehensive audit of workspace boundaries and mapping against DB E&C Job Ref 585821 (`DISCOVERY_REPORT.md`).
+- **Phase 1 (Discovery):** Comprehensive audit of architectural boundaries and component planning.
 - **Phase 2 (Environment & Toolchain Audit):** Verified host hardware (32 GB RAM, 12 vCPUs), WSL2 runtime, Docker Desktop engine connectivity, and installed Terraform, Helm, kind, GitLab Runner, and glab (`docs/environment/toolchain.md`).
 - **Phase 3 (Repository Baseline):** Repository initialized, source exclusions defined, and portfolio narrative anchored in this `README.md`.
 - **Phase 4 (Architecture & Contracts):** Workload and platform boundaries formalized (`docs/architecture/workload-contract.md`, `docs/architecture/platform-boundary.md`).

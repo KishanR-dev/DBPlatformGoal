@@ -1,10 +1,10 @@
 # Platform Operator Runbook — ServicePulse on Kubernetes
 
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Job Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Phase:** Phase 11 — Linux Platform Operations & Troubleshooting Lab  
-**Status:** Implemented & Locally Validated  
+**Project:** DB Platform Engineering Portfolio
+
+
+**Phase:** Phase 11 — Linux Platform Operations & Troubleshooting Lab
+**Status:** Implemented & Locally Validated
 
 ---
 

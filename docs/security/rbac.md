@@ -1,6 +1,6 @@
 # RBAC — Phase 13
 
-**Evidence Classification:** LOCALLY VALIDATED  
+**Evidence Classification:** LOCALLY VALIDATED
 **Cluster:** `db-platform-tf` (kind, Kubernetes v1.33.1)
 
 ---

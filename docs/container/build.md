@@ -1,12 +1,12 @@
 # Container Build Specification — ServicePulse Workload
 
-**Document Version:** 1.0.0  
-**Project:** DB Platform Engineering Portfolio  
-**Target Role:** DevOps Engineer / Platform Engineer — DB Engineering & Consulting GmbH (Ref: 585821)  
-**Workspace:** `E:\Projects\VSCode\PostOmniroute\DBPlatformGoal`  
-**Container Context:** `src/servicepulse/`  
-**Dockerfile:** `container/servicepulse/Dockerfile`  
-**Status:** Locally Built & Validated  
+**Document Version:** 1.0.0
+**Project:** DB Platform Engineering Portfolio
+
+
+**Container Context:** `src/servicepulse/`
+**Dockerfile:** `container/servicepulse/Dockerfile`
+**Status:** Locally Built & Validated
 
 ---
 
@@ -36,14 +36,14 @@ DBPlatformGoal/
 
 ## 2. Source Strategy & Provenance
 
-To satisfy the strict boundary rules between `WiproGoal` (read-only reference) and `DBPlatformGoal` (active platform repository) without introducing brittle Windows filesystem path dependencies in future CI/CD runners:
+To satisfy the strict boundary rules for the platform repository without introducing brittle filesystem path dependencies in future CI/CD runners:
 
-1. **Smallest Legitimate Source Boundary:**  
+1. **Smallest Legitimate Source Boundary:**
    Only the essential application code (`app/`), runtime package configuration (`pyproject.toml`), and frozen dependencies (`requirements.txt`) are maintained in `src/servicepulse/`. (Design decision)
-2. **Excluded Non-Runtime Assets:**  
+2. **Excluded Non-Runtime Assets:**
    Development virtualenvs (`venv/`), test caches (`.pytest_cache/`, `.ruff_cache/`), SQLite database files (`*.db`), benchmark suites (`benchmarks/`), and documentation (`docs/`) are strictly excluded from the build context via `.dockerignore`. (Verified from existing project / Design decision)
-3. **Immutability & Provenance:**  
-   Source code reflects the v1.1.0 / v1.4.0 verified release baseline of the ServicePulse application. `WiproGoal` remains 100% untouched. (Verified from existing project)
+3. **Immutability & Provenance:**
+   Source code reflects the verified release baseline of the ServicePulse application codebase. (Verified from existing project)
 
 ---
 
@@ -107,7 +107,6 @@ The build leverages a two-stage Docker architecture (`python:3.12-slim` base) en
 
 ### Local Host Build Command
 ```powershell
-Set-Location "E:\Projects\VSCode\PostOmniroute\DBPlatformGoal"
 docker build `
   -f container/servicepulse/Dockerfile `
   -t dbplatform/servicepulse:git-f549433 `

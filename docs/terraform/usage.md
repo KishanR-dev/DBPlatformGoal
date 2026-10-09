@@ -41,7 +41,7 @@ Terraform provisions the `db-platform-tf` cluster. Output includes cluster endpo
 ## 4. Kubernetes Boundary Handoff
 
 After Terraform has applied successfully, the infrastructure is active.
-Because of our separation of concerns, the ServicePulse Helm chart is managed externally (e.g., via GitLab CI/CD Pipeline). 
+Because of our separation of concerns, the ServicePulse Helm chart is managed externally (e.g., via GitLab CI/CD Pipeline).
 
 To test locally:
 1. Export the context:

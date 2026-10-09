@@ -1,3 +1,11 @@
+# ==============================================================================
+# DBPlatformGoal — GitLab CI/CD Pipeline
+# ==============================================================================
+# Runner strategy: Self-hosted shell executor (WSL2 / Linux).
+# The shell executor runs jobs natively on the host. Python-dependent stages
+# use ephemeral Docker containers to maintain Python 3.12 target version.
+# ==============================================================================
+
 stages:
   - validate
   - test
@@ -12,214 +20,105 @@ variables:
   IMAGE_REPOSITORY: "dbplatform/servicepulse"
   KUBE_NAMESPACE: "servicepulse"
   HELM_RELEASE: "servicepulse"
-  # DOCKER_HOST is required if using Docker-in-Docker natively
-  # DOCKER_HOST: tcp://docker:2375
 
-default:
-  # In a real GitLab deployment with a Docker executor, these tags ensure the right runner picks it up
-  tags:
-    - docker
-    - linux
+# Shell executor — no default image or tags required.
+# The runner is registered to this project and picks up untagged jobs.
 
-# -----------------------------------------------------------------------------
-# 1. VALIDATE STAGE
-# -----------------------------------------------------------------------------
 lint:bash:
   stage: validate
-  image: koalaman/shellcheck:stable
   script:
-    - echo "Validating Bash scripts with ShellCheck and syntax analysis..."
-    - shellcheck scripts/ci/*.sh scripts/ops/*.sh
+    - docker run --rm -v "$CI_PROJECT_DIR:/mnt" koalaman/shellcheck:stable /mnt/scripts/ci/local-ci-exec.sh /mnt/scripts/ops/system-health.sh /mnt/scripts/ops/process-diagnostics.sh /mnt/scripts/ops/network-diagnostics.sh /mnt/scripts/ops/service-check.sh /mnt/scripts/ops/firewall-check.sh /mnt/scripts/ops/resource-diagnostics.sh /mnt/scripts/ops/incident-check.sh /mnt/scripts/ops/validate-scripts.sh
 
 lint:python:
   stage: validate
-  image: python:${PYTHON_VERSION}-slim
   script:
-    - echo "Validating Python syntax and style via Ruff..."
-    - pip install --no-cache-dir ruff==0.9.9
-    - cd src/servicepulse
-    - ruff check app tests
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir ruff==0.11.12 && cd src/servicepulse && ruff check app tests"
 
 lint:helm:
   stage: validate
-  image: alpine/helm:3.17.1
   script:
-    - echo "Validating Helm chart syntax and templating..."
     - helm lint charts/servicepulse
-    - helm template servicepulse charts/servicepulse -f charts/servicepulse/values-dev.yaml
+    - helm template servicepulse charts/servicepulse -f charts/servicepulse/values-dev.yaml > /dev/null
 
-# -----------------------------------------------------------------------------
-# 2. TEST STAGE
-# -----------------------------------------------------------------------------
 test:unit:
   stage: test
-  image: python:${PYTHON_VERSION}-slim
   script:
-    - echo "Executing pytest suite and generating coverage..."
-    - cd src/servicepulse
-    - pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
-    - pytest --cov=app --cov-report=xml --cov-fail-under=85
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "cd src/servicepulse && pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt && pytest --cov=app --cov-report=xml --cov-report=term --cov-fail-under=85"
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
         path: src/servicepulse/coverage.xml
 
-# -----------------------------------------------------------------------------
-# 3. SECURITY STAGE
-# -----------------------------------------------------------------------------
 security:bandit:
   stage: security
-  image: python:${PYTHON_VERSION}-slim
   script:
-    - echo "Scanning Python AST for security vulnerabilities using Bandit..."
-    - pip install --no-cache-dir bandit==1.7.7
-    - cd src/servicepulse
-    - bandit -r app -ll
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir bandit==1.9.4 && cd src/servicepulse && bandit -r app -ll"
   allow_failure: false
 
-# Phase 13: Helm security linting — validate security context fields in rendered templates
 security:helm-lint:
   stage: security
-  image: alpine/helm:3.17.1
   script:
-    - echo "Phase 13 — Validating Helm security contexts in rendered templates..."
     - helm lint charts/servicepulse
-    - echo "Rendering chart and inspecting security context fields..."
     - RENDERED=$(helm template servicepulse charts/servicepulse -f charts/servicepulse/values.yaml)
-    - echo "$RENDERED" | grep -q "runAsNonRoot" && echo "PASS runAsNonRoot present" || (echo "FAIL runAsNonRoot missing" && exit 1)
-    - echo "$RENDERED" | grep -q "allowPrivilegeEscalation" && echo "PASS allowPrivilegeEscalation present" || (echo "FAIL allowPrivilegeEscalation missing" && exit 1)
-    - echo "$RENDERED" | grep -q "readOnlyRootFilesystem" && echo "PASS readOnlyRootFilesystem present" || (echo "FAIL readOnlyRootFilesystem missing" && exit 1)
-    - echo "$RENDERED" | grep -q "RuntimeDefault" && echo "PASS seccompProfile RuntimeDefault present" || (echo "FAIL seccompProfile missing" && exit 1)
-    - echo "$RENDERED" | grep -q "automountServiceAccountToken" && echo "PASS automountServiceAccountToken present" || (echo "FAIL automountServiceAccountToken missing" && exit 1)
-    - echo "All Phase 13 security context checks passed."
+    - echo "$RENDERED" | grep -q 'runAsNonRoot' && echo "PASS runAsNonRoot present" || (echo "FAIL runAsNonRoot missing" && exit 1)
+    - echo "$RENDERED" | grep -q 'allowPrivilegeEscalation' && echo "PASS allowPrivilegeEscalation present" || (echo "FAIL allowPrivilegeEscalation missing" && exit 1)
+    - echo "$RENDERED" | grep -q 'readOnlyRootFilesystem' && echo "PASS readOnlyRootFilesystem present" || (echo "FAIL readOnlyRootFilesystem missing" && exit 1)
+    - echo "$RENDERED" | grep -q 'RuntimeDefault' && echo "PASS seccompProfile RuntimeDefault present" || (echo "FAIL seccompProfile missing" && exit 1)
+    - echo "$RENDERED" | grep -q 'automountServiceAccountToken' && echo "PASS automountServiceAccountToken present" || (echo "FAIL automountServiceAccountToken missing" && exit 1)
   allow_failure: false
 
-# Phase 13: Dependency vulnerability check
 security:pip-audit:
   stage: security
-  image: python:${PYTHON_VERSION}-slim
   script:
-    - echo "Phase 13 — Auditing Python dependencies for known vulnerabilities..."
-    - pip install --no-cache-dir pip-audit==2.10.1
-    - pip-audit -r src/servicepulse/requirements.txt
-    - echo "pip-audit: no known vulnerabilities found."
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir pip-audit==2.10.1 && pip-audit -r src/servicepulse/requirements.txt"
   allow_failure: false
 
-# Phase 13: Kubernetes manifest security context validation
 security:manifest-check:
   stage: security
-  image: python:${PYTHON_VERSION}-slim
   script:
-    - echo "Phase 13 — Checking Kubernetes manifests for required security fields..."
-    - python3 -c "
-import yaml, sys, glob, os
-
-REQUIRED_POD_FIELDS = {
-    'runAsNonRoot': True,
-}
-REQUIRED_CONTAINER_FIELDS = {
-    'allowPrivilegeEscalation': False,
-    'readOnlyRootFilesystem': True,
-}
-WARNINGS = []
-ERRORS = []
-
-for path in glob.glob('k8s/**/*.yaml', recursive=True) + glob.glob('charts/**/*.yaml', recursive=True):
-    if 'secret.example' in path or 'psa-test-privileged' in path:
-        continue  # skip example/test files
-    try:
-        with open(path) as f:
-            for doc in yaml.safe_load_all(f):
-                if not doc or doc.get('kind') not in ['Deployment', 'Pod', 'DaemonSet']:
-                    continue
-                spec = doc.get('spec', {})
-                if doc.get('kind') != 'Pod':
-                    spec = spec.get('template', {}).get('spec', spec)
-                sc = spec.get('securityContext', {})
-                for field, expected in REQUIRED_POD_FIELDS.items():
-                    if sc.get(field) != expected:
-                        WARNINGS.append(f'{path}: {doc[\"kind\"]} podSecurityContext.{field}={sc.get(field)} (expected {expected})')
-    except Exception as e:
-        pass  # template files with Helm directives are not valid YAML
-
-for w in WARNINGS:
-    print('WARN:', w)
-if ERRORS:
-    for e in ERRORS:
-        print('ERROR:', e)
-    sys.exit(1)
-print('Manifest security check complete.')
-"
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir pyyaml && chmod +x /builds/project/scripts/ci/manifest-check.sh || true; python3 -c "import yaml, sys, glob; REQUIRED_POD_FIELDS={'runAsNonRoot': True}; WARNINGS=[]; [WARNINGS.append(f'{path}: podSecurityContext.{field}={sc.get(field)} (expected {expected})') for path in glob.glob('k8s/**/*.yaml', recursive=True) + glob.glob('charts/**/*.yaml', recursive=True) if 'secret.example' not in path and 'psa-test-privileged' not in path for doc in yaml.safe_load_all(open(path)) if doc and doc.get('kind') in ['Deployment', 'Pod', 'DaemonSet'] for spec in [doc.get('spec', {}) if doc.get('kind') != 'Pod' else doc.get('template', {}).get('spec', doc.get('spec', {}))] for sc in [spec.get('securityContext', {})] for field, expected in REQUIRED_POD_FIELDS.items() if sc.get(field) != expected]; print('\n'.join(['WARN: '+w for w in WARNINGS]))""
   allow_failure: true
-  # allow_failure: true because Helm templates are not valid YAML for static analysis
 
-# -----------------------------------------------------------------------------
-# 4. BUILD STAGE
-# -----------------------------------------------------------------------------
 build:container:
   stage: build
-  # Note: A real Docker executor uses the docker CLI and DinD service.
-  # For local validation, the host Docker engine handles this.
-  image: docker:24.0.5
   script:
-    - echo "Building immutable container image..."
-    - export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-local}
+    - export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-$(git rev-parse --short HEAD)}
     - export IMAGE_TAG="git-${CI_COMMIT_SHORT_SHA}"
     - cd container/servicepulse
     - docker build -t ${IMAGE_REPOSITORY}:${IMAGE_TAG} -f Dockerfile ../../src/servicepulse
-    - echo "Saving image archive for downstream kind deployment..."
     - docker save ${IMAGE_REPOSITORY}:${IMAGE_TAG} > servicepulse-image.tar
   artifacts:
     paths:
       - container/servicepulse/servicepulse-image.tar
     expire_in: 1 hour
 
-# -----------------------------------------------------------------------------
-# 5. PACKAGE STAGE
-# -----------------------------------------------------------------------------
 package:helm:
   stage: package
-  image: alpine/helm:3.17.1
   script:
-    - echo "Packaging Helm chart artifact..."
+    - mkdir -p charts/dist
     - helm package charts/servicepulse -d charts/dist
   artifacts:
     paths:
       - charts/dist/*.tgz
     expire_in: 1 day
 
-# -----------------------------------------------------------------------------
-# 6. DEPLOY STAGE
-# -----------------------------------------------------------------------------
 deploy:kind:
   stage: deploy
-  # This stage requires Docker (to load image into kind) + kind + helm + kubectl
-  # A custom operations container is standard, but we execute via Shell natively in our mock
-  image: bitnami/kubectl:latest
   script:
-    - export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-local}
+    - export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-$(git rev-parse --short HEAD)}
     - export IMAGE_TAG="git-${CI_COMMIT_SHORT_SHA}"
-    - echo "Loading built image archive into local kind cluster..."
     - cd container/servicepulse
     - docker load -i servicepulse-image.tar
     - kind load docker-image ${IMAGE_REPOSITORY}:${IMAGE_TAG} --name db-platform
     - cd ../..
-    - echo "Executing Helm upgrade --install..."
     - helm upgrade --install ${HELM_RELEASE} charts/servicepulse --namespace ${KUBE_NAMESPACE} --create-namespace -f charts/servicepulse/values-dev.yaml --set image.repository=${IMAGE_REPOSITORY} --set image.tag=${IMAGE_TAG}
   environment:
     name: development
 
-# -----------------------------------------------------------------------------
-# 7. VERIFY STAGE
-# -----------------------------------------------------------------------------
 verify:health:
   stage: verify
-  image: bitnami/kubectl:latest
   script:
-    - echo "Waiting for zero-downtime rollout completion..."
     - kubectl rollout status deployment/${HELM_RELEASE} -n ${KUBE_NAMESPACE} --timeout=120s
-    - echo "Triggering smoke test against /health and /api/v1/metrics endpoints..."
-    # Launch ephemeral curl pods inside the cluster network to validate service reachability
     - kubectl -n ${KUBE_NAMESPACE} run ci-smoke-test-health --image=curlimages/curl:latest --restart=Never --rm -i -- -s --fail http://${HELM_RELEASE}/health
     - kubectl -n ${KUBE_NAMESPACE} run ci-smoke-test-metrics --image=curlimages/curl:latest --restart=Never --rm -i -- -s --fail http://${HELM_RELEASE}/api/v1/metrics

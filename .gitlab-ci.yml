@@ -77,7 +77,7 @@ security:pip-audit:
 security:manifest-check:
   stage: security
   script:
-    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir pyyaml && chmod +x /builds/project/scripts/ci/manifest-check.sh || true; python3 -c "import yaml, sys, glob; REQUIRED_POD_FIELDS={'runAsNonRoot': True}; WARNINGS=[]; [WARNINGS.append(f'{path}: podSecurityContext.{field}={sc.get(field)} (expected {expected})') for path in glob.glob('k8s/**/*.yaml', recursive=True) + glob.glob('charts/**/*.yaml', recursive=True) if 'secret.example' not in path and 'psa-test-privileged' not in path for doc in yaml.safe_load_all(open(path)) if doc and doc.get('kind') in ['Deployment', 'Pod', 'DaemonSet'] for spec in [doc.get('spec', {}) if doc.get('kind') != 'Pod' else doc.get('template', {}).get('spec', doc.get('spec', {}))] for sc in [spec.get('securityContext', {})] for field, expected in REQUIRED_POD_FIELDS.items() if sc.get(field) != expected]; print('\n'.join(['WARN: '+w for w in WARNINGS]))""
+    - docker run --rm -v "$CI_PROJECT_DIR:/builds/project" -w /builds/project python:${PYTHON_VERSION}-slim bash -c "pip install --no-cache-dir pyyaml && python3 scripts/ci/manifest-check.py"
   allow_failure: true
 
 build:container:

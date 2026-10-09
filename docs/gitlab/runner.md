@@ -1,21 +1,36 @@
-# Local Execution Guide
+# GitLab Runner Architecture & Execution
 
-## Validating `.gitlab-ci.yml` Locally
-Because external GitLab environments (and isolated Docker-in-Docker executors) are not authenticated in this portfolio context, validation is executed by faithfully emulating the pipeline commands locally using the system's runtime tools (Python, Helm, Docker, kubectl).
+## Overview
+As part of Phase 14B of the DB Platform delivery, the platform utilizes a **live GitLab repository** (`gitlab.com/KishanR-dev/DBPlatformGoal`) paired with a **Self-Hosted GitLab Runner** running locally within the WSL2 environment. This establishes a fully authentic CI/CD loop that executes the exact pipeline definitions configured in `.gitlab-ci.yml`.
 
-### 1. Prerequisites
-- Docker Engine / Docker Desktop (Active)
-- Local `kind` cluster named `db-platform` running.
-- Python 3.12+ (accessible via `python3`)
+## Local Runner Strategy
 
-### 2. Execution Command
-A strict, isolated Bash emulator intercepts the logic blocks from the CI pipeline config:
+While enterprise GitLab environments utilize isolated `docker` executors leveraging DinD (Docker-in-Docker) or Kubernetes scaling, executing a seamless integration via WSL2 and Docker Desktop introduces unique bind-mount incompatibilities (`-v $CI_PROJECT_DIR:/builds/project`) due to path resolution cross-boundaries. 
+
+To resolve this seamlessly while retaining the integrity of a real GitLab CI pipeline, the runner runs as a **Shell Executor** (`executor = "shell"`) natively on WSL2.
+
+### 1. The Ephemeral Container Pattern
+Instead of utilizing GitLab's native `image:` directives (which require Docker execution contexts and volume mounts), the pipeline injects an **ephemeral inline build pattern** directly within the `script` block.
+
 ```bash
-# Execute from repo root
-./scripts/ci/local-ci-exec.sh
+docker build -t gitlab-ci-shellcheck -f - . << 'DB'
+FROM alpine:latest
+RUN apk add --no-cache shellcheck
+WORKDIR /builds/project
+COPY . .
+CMD ["/bin/sh", "-c", "shellcheck scripts/ci/*.sh scripts/ops/*.sh"]
+DB
+docker run --rm gitlab-ci-shellcheck
 ```
+This elegantly sidesteps the volume mount dilemma by copying the Git workspace directly into the container during the build step, executing the tools (like `shellcheck`, `pytest`, `helm`, `pip-audit`), and tearing down the container, preserving a clean execution environment.
 
-### 3. Pipeline Differences (Local vs Native GitLab)
-- **Executor Context:** Natively, GitLab CI spins up distinct isolated Pods/Containers per pipeline stage, parsing the `image: ` declaration to define context. The emulator executes directly within the current host (WSL2), injecting a local Python Virtual Environment (`venv`) to sandbox Python tasks rather than pulling distinct runner images.
-- **Artifact Propagation:** Natively, `paths:` blocks are automatically zipped and unzipped across stages. The local script avoids this overhead by simply reusing the physical repository bounds.
-- **Image Storing:** Built containers in GitLab would normally utilize `docker login` and push to a registry (`nexus`, `gcr`, or `gitlab registry`). The local mockup saves the local image cache explicitly into an archive and side-loads it into `kind`.
+### 2. Environment Configuration & Subshell Fixes
+A known edge case with Debian/Ubuntu-based WSL environments operating non-interactive shell sessions (triggered by `gitlab-runner`) revolves around the `~/.bash_logout` script executing `/usr/bin/clear_console`. This command generates an `exit status 1` failure globally when there's no TTY attached.
+
+**Fix Applied:** The `.bash_logout` file in the runner execution path was neutralized (`mv ~/.bash_logout ~/.bash_logout.bak`) ensuring clean non-interactive pipeline invocation.
+
+### 3. Verification & Execution Status
+The self-hosted Shell runner (`system ID: s_52f570c5ce0e`) polling the project successfully completed the entire 7-stage promotion model.
+- **Pipeline #2928691505 (IID 9)**: Successfully executed across `validate`, `test`, `security`, `build`, `package`, `deploy`, and `verify` stages in 4 minutes (243s).
+- Artifacts generated (e.g., test coverage XML, container `.tar`, Helm `.tgz`) correctly passed through the runner execution contexts.
+- Downstream smoke tests reliably pinged the Helm deployment exposed within the local `kind` cluster.

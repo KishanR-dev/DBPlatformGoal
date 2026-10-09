@@ -29,11 +29,11 @@ lint:bash:
   script:
     - |
       docker build -t gitlab-ci-shellcheck -f - . << 'DB'
-      FROM koalaman/shellcheck:stable
-      WORKDIR /app
+      FROM alpine:latest
+      RUN apk add --no-cache shellcheck
+      WORKDIR /builds/project
       COPY . .
-      ENTRYPOINT ["/bin/sh", "-c"]
-      CMD ["shellcheck scripts/ci/*.sh scripts/ops/*.sh"]
+      CMD ["/bin/sh", "-c", "shellcheck scripts/ci/*.sh scripts/ops/*.sh"]
       DB
       docker run --rm gitlab-ci-shellcheck
 
@@ -70,10 +70,14 @@ test:unit:
       RUN cd src/servicepulse && pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
       CMD ["bash", "-c", "cd src/servicepulse && pytest --cov=app --cov-report=xml --cov-report=term --cov-fail-under=85"]
       DB
+      set +e
       docker run --name pytest-runner gitlab-ci-pytest
+      RUN_EXIT=$?
+      set -e
       mkdir -p src/servicepulse
       docker cp pytest-runner:/builds/project/src/servicepulse/coverage.xml src/servicepulse/coverage.xml || true
       docker rm pytest-runner
+      exit $RUN_EXIT
   artifacts:
     reports:
       coverage_report:

@@ -27,26 +27,28 @@ variables:
 lint:bash:
   stage: validate
   script:
-    - docker build -t gitlab-ci-shellcheck -f - . << 'DB'
-FROM koalaman/shellcheck:stable
-WORKDIR /app
-COPY . .
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["shellcheck scripts/ci/*.sh scripts/ops/*.sh"]
-DB
-    - docker run --rm gitlab-ci-shellcheck
+    - |
+      docker build -t gitlab-ci-shellcheck -f - . << 'DB'
+      FROM koalaman/shellcheck:stable
+      WORKDIR /app
+      COPY . .
+      ENTRYPOINT ["/bin/sh", "-c"]
+      CMD ["shellcheck scripts/ci/*.sh scripts/ops/*.sh"]
+      DB
+      docker run --rm gitlab-ci-shellcheck
 
 lint:python:
   stage: validate
   script:
-    - docker build -t gitlab-ci-python -f - . << 'DB'
-FROM python:3.12-slim
-WORKDIR /builds/project
-COPY . .
-RUN pip install --no-cache-dir ruff==0.11.12
-CMD ["bash", "-c", "cd src/servicepulse && ruff check app tests"]
-DB
-    - docker run --rm gitlab-ci-python
+    - |
+      docker build -t gitlab-ci-python -f - . << 'DB'
+      FROM python:3.12-slim
+      WORKDIR /builds/project
+      COPY . .
+      RUN pip install --no-cache-dir ruff==0.11.12
+      CMD ["bash", "-c", "cd src/servicepulse && ruff check app tests"]
+      DB
+      docker run --rm gitlab-ci-python
 
 lint:helm:
   stage: validate
@@ -60,18 +62,18 @@ lint:helm:
 test:unit:
   stage: test
   script:
-    - docker build -t gitlab-ci-pytest -f - . << 'DB'
-FROM python:3.12-slim
-WORKDIR /builds/project
-COPY . .
-RUN cd src/servicepulse && pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
-CMD ["bash", "-c", "cd src/servicepulse && pytest --cov=app --cov-report=xml --cov-report=term --cov-fail-under=85"]
-DB
-    - docker run --name pytest-runner gitlab-ci-pytest
-    # Keep container to extract coverage artifact, then clean up
-    - mkdir -p src/servicepulse
-    - docker cp pytest-runner:/builds/project/src/servicepulse/coverage.xml src/servicepulse/coverage.xml || true
-    - docker rm pytest-runner
+    - |
+      docker build -t gitlab-ci-pytest -f - . << 'DB'
+      FROM python:3.12-slim
+      WORKDIR /builds/project
+      COPY . .
+      RUN cd src/servicepulse && pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+      CMD ["bash", "-c", "cd src/servicepulse && pytest --cov=app --cov-report=xml --cov-report=term --cov-fail-under=85"]
+      DB
+      docker run --name pytest-runner gitlab-ci-pytest
+      mkdir -p src/servicepulse
+      docker cp pytest-runner:/builds/project/src/servicepulse/coverage.xml src/servicepulse/coverage.xml || true
+      docker rm pytest-runner
   artifacts:
     reports:
       coverage_report:
@@ -84,14 +86,15 @@ DB
 security:bandit:
   stage: security
   script:
-    - docker build -t gitlab-ci-bandit -f - . << 'DB'
-FROM python:3.12-slim
-WORKDIR /builds/project
-COPY . .
-RUN pip install --no-cache-dir bandit==1.9.4
-CMD ["bash", "-c", "cd src/servicepulse && bandit -r app -ll"]
-DB
-    - docker run --rm gitlab-ci-bandit
+    - |
+      docker build -t gitlab-ci-bandit -f - . << 'DB'
+      FROM python:3.12-slim
+      WORKDIR /builds/project
+      COPY . .
+      RUN pip install --no-cache-dir bandit==1.9.4
+      CMD ["bash", "-c", "cd src/servicepulse && bandit -r app -ll"]
+      DB
+      docker run --rm gitlab-ci-bandit
   allow_failure: false
 
 security:helm-lint:
@@ -107,27 +110,29 @@ security:helm-lint:
 security:pip-audit:
   stage: security
   script:
-    - docker build -t gitlab-ci-pipaudit -f - . << 'DB'
-FROM python:3.12-slim
-WORKDIR /builds/project
-COPY . .
-RUN pip install --no-cache-dir pip-audit==2.10.1
-CMD ["bash", "-c", "pip-audit -r src/servicepulse/requirements.txt"]
-DB
-    - docker run --rm gitlab-ci-pipaudit
+    - |
+      docker build -t gitlab-ci-pipaudit -f - . << 'DB'
+      FROM python:3.12-slim
+      WORKDIR /builds/project
+      COPY . .
+      RUN pip install --no-cache-dir pip-audit==2.10.1
+      CMD ["bash", "-c", "pip-audit -r src/servicepulse/requirements.txt"]
+      DB
+      docker run --rm gitlab-ci-pipaudit
   allow_failure: false
 
 security:manifest-check:
   stage: security
   script:
-    - docker build -t gitlab-ci-manifest -f - . << 'DB'
-FROM python:3.12-slim
-WORKDIR /builds/project
-COPY . .
-RUN pip install --no-cache-dir pyyaml
-CMD ["python3", "scripts/ci/manifest-check.py"]
-DB
-    - docker run --rm gitlab-ci-manifest
+    - |
+      docker build -t gitlab-ci-manifest -f - . << 'DB'
+      FROM python:3.12-slim
+      WORKDIR /builds/project
+      COPY . .
+      RUN pip install --no-cache-dir pyyaml
+      CMD ["python3", "scripts/ci/manifest-check.py"]
+      DB
+      docker run --rm gitlab-ci-manifest
   allow_failure: true
 
 # =============================================================================

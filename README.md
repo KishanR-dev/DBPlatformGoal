@@ -3,7 +3,7 @@
 **Role Profile:** DevOps Engineer / Platform Engineer
 **Portfolio Repository:** `DBPlatformGoal`
 
-<video src="brag-output/brag.mp4" poster="brag-output/brag.jpg" controls width="100%"></video>
+[![Demo](brag-output/brag.jpg)](brag-output/brag.mp4)
 
 ---
 

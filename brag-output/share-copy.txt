@@ -1,0 +1,1 @@
+DBPlatformGoal: Evidence-first platform engineering. 78 tests passed, 2,000+ lines of ShellCheck-clean Bash, Kubernetes PSA security, and GitLab CI/CD pipelines locally validated.

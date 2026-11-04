@@ -48,7 +48,7 @@ A strict declarative boundary was enforced to manage environments reliably:
 ## 7. Linux/Bash Operations & Networking
 
 This portfolio goes beyond YAML configuration to include a vast operational diagnostics lab natively built for Linux (Ubuntu LTS).
-- More than 600 lines of robust Bash scripts incorporating strict `set -euo pipefail` limits, rigorous error handling, explicit logging, and 100% clean ShellCheck compliance. ([Operations Scripts](../scripts/ops/))
+- More than 2,000 lines of robust Bash scripts (across operations, security, CI, and benchmarks) incorporating strict `set -euo pipefail` limits, rigorous error handling, explicit logging, and 100% clean ShellCheck compliance. ([Operations Scripts](../scripts/ops/))
 - Networking diagnostics cover DNS resolution, TCP socket states (`ss`), and Netfilter/iptables packet filtering. Kubernetes boundaries were verified via kindnet CNI nftables block tests.
 
 ## 8. Observability, Security & Incident Response
@@ -62,6 +62,7 @@ This portfolio goes beyond YAML configuration to include a vast operational diag
 This portfolio honestly reflects its context as a personal engineering project:
 - **Local Infrastructure vs. Cloud:** The platform runs locally via `Docker/kind` rather than AWS EKS or Azure AKS. This intentionally scales the architecture mechanically without external provider overhead.
 - **Local Shell Runner:** Used a self-hosted shell executor to mitigate Docker-in-Docker isolation complexity while proving deterministic pipeline capability.
+- **Database Architecture:** The workload uses SQLite in WAL mode for local state persistence. Because SQLite locks files against multi-writer concurrency, the Kubernetes deployment is intentionally restricted to a single replica limit (`replicas: 1`). This is not an active-active or highly available configuration. A production multi-replica design would require an appropriately designed external database or another suitable persistence architecture.
 - **Scale:** All metrics and incidents involve simulated, synthetic loads. It does not replicate multi-region DNS failovers, enterprise traffic scale, or multi-tenant corporate compliance layers.
 
 ## 10. Navigating the Repository

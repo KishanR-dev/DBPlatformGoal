@@ -3,6 +3,8 @@
 **Role Profile:** DevOps Engineer / Platform Engineer
 **Portfolio Repository:** `DBPlatformGoal`
 
+<video src="brag-output/brag.mp4" poster="brag-output/brag.jpg" controls width="100%"></video>
+
 ---
 
 ## 1. Purpose

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #0f172a;
+        --surface: #1e293b;
+        --border: #334155;
+        --ink: #f8fafc;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --success: #34d399;
+        --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      #root {
+        width: 1920px;
+        height: 1080px;
+        position: relative;
+        display: block;
+      }
+      .scene {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        padding: 80px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 8px 20px;
+        border-radius: 9999px;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 24px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      h1.title {
+        font-size: 64px;
+        font-weight: 700;
+        line-height: 1.1;
+        text-align: center;
+        margin-bottom: 20px;
+        letter-spacing: -0.03em;
+      }
+      p.subtitle {
+        font-size: 28px;
+        color: var(--muted);
+        text-align: center;
+        max-width: 1200px;
+        line-height: 1.4;
+      }
+      .terminal-box {
+        width: 1400px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 15px;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot-red { background: #ef4444; }
+      .dot-yellow { background: #f59e0b; }
+      .dot-green { background: #10b981; }
+      .terminal-title {
+        margin-left: 10px;
+        font-size: 16px;
+        color: var(--muted);
+      }
+      .terminal-body {
+        font-family: monospace;
+        font-size: 22px;
+        line-height: 1.6;
+        color: var(--ink);
+      }
+      .success-text { color: var(--success); }
+      .accent-text { color: var(--accent); }
+      .grid-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 50px;
+        width: 1500px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 35px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .card h3 {
+        font-size: 24px;
+        color: var(--accent);
+      }
+      .card p {
+        font-size: 18px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Audio Track -->
+      <audio id="bgm" data-start="0" data-duration="20" data-track-index="0" data-volume="0.6" src="assets/music/happy-beats-business-moves-vol-1-by-ende-dot-app.mp3"></audio>
+
+      <!-- Scene 1: Hook (0s - 4.5s) -->
+      <div id="scene1" class="scene" data-start="0" data-duration="4.5" data-track-index="1">
+        <div class="badge">Evidence-First Platform Engineering</div>
+        <h1 class="title">DBPlatformGoal: ServicePulse Operations</h1>
+        <p class="subtitle">Validating containerized workloads, Kubernetes hardening, and automated CI/CD locally.</p>
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="terminal-title">bash — pytest src/servicepulse</span>
+          </div>
+          <div class="terminal-body">
+            <div>collected 78 items</div>
+            <div class="success-text">=== 78 passed in 5.25s ===</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 2: Pipeline & Security Audit (4.5s - 10.0s) -->
+      <div id="scene2" class="scene" data-start="4.5" data-duration="5.5" data-track-index="1">
+        <div class="badge">Pipeline & Supply-Chain Security</div>
+        <h1 class="title">7-Stage GitLab CI/CD & Static Analysis</h1>
+        <div class="grid-cards">
+          <div class="card">
+            <h3>ShellCheck 100%</h3>
+            <p>Robust Bash automation scripts with strict set -euo pipefail limits.</p>
+          </div>
+          <div class="card">
+            <h3>Bandit Scan</h3>
+            <p class="success-text">0 security issues found across Python source files.</p>
+          </div>
+          <div class="card">
+            <h3>Pip-Audit</h3>
+            <p class="success-text">0 known CVE vulnerabilities in frozen requirements.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 3: Kubernetes & Hardening (10.0s - 15.5s) -->
+      <div id="scene3" class="scene" data-start="10.0" data-duration="5.5" data-track-index="1">
+        <div class="badge">Kubernetes Hardening</div>
+        <h1 class="title">Pod Security Admission & Network Policies</h1>
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="terminal-title">kubectl & nftables validation</span>
+          </div>
+          <div class="terminal-body">
+            <div>PSA Policy: <span class="accent-text">restricted</span> (non-root UID 1000)</div>
+            <div>Read-only root filesystem: <span class="success-text">Enforced</span></div>
+            <div>NetworkPolicy ingress block: <span class="success-text">Verified (curl exit-28 timeout)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 4: Outro (15.5s - 20.0s) -->
+      <div id="scene4" class="scene" data-start="15.5" data-duration="4.5" data-track-index="1">
+        <div class="badge">Production Ready</div>
+        <h1 class="title">DBPlatformGoal: Production-Grade Platform Engineering</h1>
+        <p class="subtitle">Locally verified evidence-first architecture. Ready for enterprise deployment.</p>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 animations
+      tl.fromTo("#scene1", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 0);
+      tl.fromTo("#scene1 .badge", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.2);
+      tl.fromTo("#scene1 h1", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.4);
+      tl.fromTo("#scene1 p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.6);
+      tl.fromTo("#scene1 .terminal-box", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.8);
+      tl.to("#scene1", { opacity: 0, duration: 0.4 }, 4.1);
+
+      // Scene 2 animations
+      tl.fromTo("#scene2", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 4.5);
+      tl.fromTo("#scene2 .badge", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 4.7);
+      tl.fromTo("#scene2 h1", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 4.9);
+      tl.fromTo("#scene2 .card", { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.15, duration: 0.5 }, 5.2);
+      tl.to("#scene2", { opacity: 0, duration: 0.4 }, 9.6);
+
+      // Scene 3 animations
+      tl.fromTo("#scene3", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 10.0);
+      tl.fromTo("#scene3 .badge", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 10.2);
+      tl.fromTo("#scene3 h1", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 10.4);
+      tl.fromTo("#scene3 .terminal-box", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 10.6);
+      tl.to("#scene3", { opacity: 0, duration: 0.4 }, 15.1);
+
+      // Scene 4 animations
+      tl.fromTo("#scene4", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 15.5);
+      tl.fromTo("#scene4 .badge", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 15.7);
+      tl.fromTo("#scene4 h1", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 15.9);
+      tl.fromTo("#scene4 p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 16.1);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -24,8 +24,8 @@ if ! command -v vegeta &> /dev/null; then
         END_TIME=$(( $(date +%s) + ${DURATION%s} ))
 
         echo "Running pure bash synthetic load..."
-        while [ $(date +%s) -lt $END_TIME ]; do
-            for i in $(seq 1 $RATE); do
+        while [ "$(date +%s)" -lt "$END_TIME" ]; do
+            for ((i=1; i<=RATE; i++)); do
                 curl -s "$TARGET_URL/health" > /dev/null &
             done
             wait

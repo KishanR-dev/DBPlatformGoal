@@ -38,11 +38,6 @@ pass()  { echo "[PASS]  $*"; PASS=$((PASS+1)); }
 fail()  { echo "[FAIL]  $*"; FAIL=$((FAIL+1)); }
 header(){ echo; echo "=== $* ==="; echo; }
 
-wait_pod_ready() {
-    local ns="$1" name="$2" timeout="${3:-60}"
-    kubectl wait --for=condition=ready pod/"${name}" -n "${ns}" --timeout="${timeout}s" 2>&1
-}
-
 # --------------------------------------------------------------------------
 # 0. Discover running ServicePulse pod
 # --------------------------------------------------------------------------
